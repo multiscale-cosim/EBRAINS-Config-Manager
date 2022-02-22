@@ -7,7 +7,7 @@
 import os
 import logging
 import logging.config
-from utils import dictionary_utils
+from python.configuration_manager.utils import dictionary_utils
 
 
 class ConfigLogger:
@@ -27,14 +27,17 @@ class ConfigLogger:
     @classmethod
     def __make_logging_config_compatible(cls, xml_dictionary,
                                          target_directory):
-        """Makes the logger settings compatible with the logging.config API.
-        Also, sets the destination of logs to specified log file at specified location.
+        """
+        Makes the logger settings defined in XML file
+        compatible with the logging.config API. Also,
+        sets the destination of logs to specified log
+        file at specified location.
         """
         # set the version as 1 (logging.config API requirement)
         dictionary_utils.set_in_dictionary(xml_dictionary, ['version'], 1)
         # disable any existing logger
-        dictionary_utils.set_in_dictionary(xml_dictionary, 
-                                           ['disable_existing_loggers'], False)
+        dictionary_utils.set_in_dictionary(xml_dictionary, ['disable_existing_loggers']
+                                           , False)
         dictionary_utils.set_in_dictionary(xml_dictionary, ['loggers'], {})
         # setup error logs file
         error_logs_file = cls._make_log_file(target_directory, "errors.log")

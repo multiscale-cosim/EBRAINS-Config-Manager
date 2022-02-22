@@ -1,10 +1,13 @@
 # Configurations Manager
 
-It provides with the basic functionalities including the directory management, log management, XML configurations parsing conversion of XML element tree into Python dictionary object. The features it provides include:
+It provides with the basic functionalities including the 
+directory management, log management, XML configurations parsing,
+conversion of XML element tree into Python dictionary object.
+The features it provides include, a centralized management of
 
-* a centralized management of directories,
-* XML parsing and manipulation, and
-* a uniform format for the log settings.
+* XML parsing and manipulation, 
+* setting up directories, and
+* a uniform format for the logs.
 
 ## Basic Description
 
@@ -13,8 +16,8 @@ It provides with the basic functionalities including the directory management, l
 * **xml_parser.py**: It provides the functionalities for parsing an xml file and to manipulate it (e.g. converting an xml element tree into dictionary etc.). 
 * **config_logger.py**: Creates and configure logger using specified name and configuration settings.
 * **configurations_manager.py**: Mediator to communicate with all modules and a central point to manage the configurations.
-* **utils/directory_utils.py**: Utility methods for directory management such as to safely creating a directory where there is a race condition i.e. multiple processes try to create the same directory.
-* **utils/dictionary_utils.py**: Utility methods to manipulate the nested dictionaries such as to find and set a value in a nested dictionary.
+* **utils/directory_util.py**: Utility methods for directory management such as to safely creating a directory where there is a race condition i.e. multiple processes try to create the same directory.
+* **utils/dictionary_util.py**: Utility methods to manipulate the nested dictionaries such as to find a set a value in a nested dictionary.
 
 ## Example
 
@@ -28,7 +31,16 @@ The following example illustrates how to:
 1. Setup Log configurations 
    1. set path to logs at default location (e.g. ../Cosimulation_outputs/<username>_output_<timestamp>/logs)
    1. set user specified path to the logs
-   
+
+
+```bash
+# set enviornment variable
+$ export PYTHONPATH=/path/to/common-utils
+
+# access
+$ cd /path/to/configuration_manager
+```
+
 ```python
 # instantiate configuration manager
 configurations_manager = ConfigurationsManager()

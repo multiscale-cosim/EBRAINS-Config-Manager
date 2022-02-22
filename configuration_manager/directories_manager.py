@@ -1,18 +1,20 @@
-# Copyright 2020 Forschungszentrum Jülich GmbH and Aix-Marseille Université
-# "Licensed to the Apache Software Foundation (ASF) under one or more
-#  contributor license agreements; and to You under the Apache License,
-#  Version 2.0."
+# ------------------------------------------------------------------------------
+#  Copyright 2020 Forschungszentrum Jülich GmbH
+# "Licensed to the Apache Software Foundation (ASF) under one or more contributor
+#  license agreements; and to You under the Apache License, Version 2.0. "
+# ------------------------------------------------------------------------------
 
 import os
 import getpass
 from pathlib import Path
 from datetime import datetime
-from utils import directory_utils
-from default_directories_enum import DefaultDirectories
+from python.configuration_manager.utils import directory_utils
+from python.configuration_manager.default_directories_enum import DefaultDirectories
+
 
 class MetaDirectoriesManager(type):
     """This metaclass ensures there exists only one instance of
-    DirectoriesManager class. This prevents the side-effects such as
+    DirectoriesManager class. It prevents the side-effects such as
     the creation of multiple copies of output directories, concurrent
     access of DirectoriesManager class, and etc.
     """
@@ -28,7 +30,7 @@ class MetaDirectoriesManager(type):
 
 class DirectoriesManager(metaclass=MetaDirectoriesManager):
     __directories = {}
-    
+
     def setup_default_directories(self, path) -> None:
         """ Setup default directories at specified location
         Default directories: Output, Output/Results, Output/Logs,
@@ -43,7 +45,7 @@ class DirectoriesManager(metaclass=MetaDirectoriesManager):
         # setup output directory at specified location
         output_dir = self.__setup_output_directory("outputs", path)
         # add default directory in dictionary
-        self.__directories.update({DefaultDirectories.OUTPUT: output_dir})
+        self.__directories = ({DefaultDirectories.OUTPUT: output_dir})
         self.get_directory(DefaultDirectories.OUTPUT)
         # setup other default directories
         self.__directories.update({DefaultDirectories.LOGS:
@@ -57,7 +59,8 @@ class DirectoriesManager(metaclass=MetaDirectoriesManager):
                                       DefaultDirectories.FIGURES.value)})
         self.__directories.update({DefaultDirectories.MONITORING_DATA:
                                   self.__make_default_directory(
-                                      DefaultDirectories.MONITORING_DATA.value)})
+                                    DefaultDirectories.MONITORING_DATA.value)})
+        return output_dir
 
     def get_directory(self, directory):
         """Returns the path for the specified directory.
@@ -74,6 +77,10 @@ class DirectoriesManager(metaclass=MetaDirectoriesManager):
     def __setup_output_directory(directory_name, path):
         """Creates the parent directory for outputs such as results,
         logs etc. at specified location.
+
+        NOTE the directory is created as
+        <user_name>_<directory_name>_<timestamp>
+        For example: FOO_outputs_2021-09-28-144735
 
         Parameters
         ----------
