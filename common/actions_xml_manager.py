@@ -95,13 +95,12 @@ class ActionsXmlManager(object):
                 # at the end of the action XML dissection process
                 # there will be an attribute (list) with the Popen arguments
                 dissect_return = xml_action_manager.dissect()
+
                 if not dissect_return == common.enums.XmlManagerReturnCodes.XML_OK:
                     self.__logger.error('Error found dissecting {}'.format(current_action_xml_path_filename))
                     return dissect_return
-
                 # raw arguments values gathered from XML configuration file
                 popen_arguments_list = xml_action_manager.get_Popen_arguments_list()
-
                 # transform CO_SIM_* variables
                 # NOTE: the CO_SIM_* variables must have the run-time values assigned in this point,
                 # otherwise, the Co-Simulation process will not be performed properly
@@ -111,7 +110,6 @@ class ActionsXmlManager(object):
                         'Error found transforming into values the CO_SIM_ variables found in {}'.format(
                             current_action_xml_path_filename))
                     return common.enums.XmlManagerReturnCodes.XML_CO_SIM_VARIABLE_ERROR
-
                 self.__actions_popen_arguments_dict[key] = popen_arguments_list
 
         return common.enums.XmlManagerReturnCodes.XML_OK

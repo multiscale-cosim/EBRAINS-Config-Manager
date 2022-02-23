@@ -16,7 +16,7 @@ from .action import Action
 from .args import arg_parse
 from .arranger import Arranger
 from .constants import CO_SIM_ACTION_TYPES_TUPLE
-from .cosimulator import CoSimulator
+# from .cosimulator import CoSimulator
 from .enums import (BashReturnCodes,
                     CoSimulatorReturnCodes,
                     LauncherReturnCodes,
@@ -26,8 +26,8 @@ from .variables import (CO_SIM_ACTIONS_DIR,
                         CO_SIM_ROUTINES_DIR)
 from .variables_manager import VariablesManager
 from .exceptions import EnvironmentVariableNotSet
-from .launcher import Launcher
-from .spawner import Spawner
+# from .launcher import Launcher
+# from .spawner import Spawner
 from .utils import transform_environment_variables_into_values
 from .xml_manager import XmlManager
 from .plan_xml_manager import PlanXmlManager

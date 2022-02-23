@@ -5,10 +5,10 @@
 # ------------------------------------------------------------------------------
 
 from __future__ import annotations
-from configuration_manager.xml_parser import Parser
-from configuration_manager.config_logger import ConfigLogger
-from configuration_manager.directories_manager import DirectoriesManager
-from configuration_manager.default_directories_enum import DefaultDirectories
+from xml_parser import Parser
+from config_logger import ConfigLogger
+from directories_manager import DirectoriesManager
+from default_directories_enum import DefaultDirectories
 
 
 class ConfigurationsManager:
