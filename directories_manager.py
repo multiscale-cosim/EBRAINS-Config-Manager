@@ -8,8 +8,8 @@ import os
 import getpass
 from pathlib import Path
 from datetime import datetime
-from python.configuration_manager.utils import directory_utils
-from python.configuration_manager.default_directories_enum import DefaultDirectories
+from configuration_manager.utils import directory_utils
+from configuration_manager.default_directories_enum import DefaultDirectories
 
 
 class MetaDirectoriesManager(type):

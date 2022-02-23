@@ -7,7 +7,7 @@
 import os
 import logging
 import logging.config
-from python.configuration_manager.utils import dictionary_utils
+from configuration_manager.utils import dictionary_utils
 
 
 class ConfigLogger:
