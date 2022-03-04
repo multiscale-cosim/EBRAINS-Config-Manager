@@ -32,7 +32,7 @@
             <routine>
                 <!-- <routine_code>{CO_SIM_ROUTINES_DIR}/nest_elephant_tvb/translation/test_file/test_input_nest_to_tvb.py</routine_code> -->
                 <!-- <routine_code>/home/vagrant/multiscale-cosim-repos/TVB-NEST-usecase1/cosim_example_demos/TVB-NEST-demo/nest_elephant_tvb/tvb/TVB_simple_example_co_sim.py</routine_code> -->
-                <routine_code>/home/vagrant/multiscale-cosim-repos/TVB-NEST-usecase1/cosim_example_demos/TVB-NEST-demo/nest_elephant_tvb/tvb/TVB_with_cosim_with_steering.py</routine_code>
+                <routine_code>/home/vagrant/multiscale-cosim-repos/TVB-NEST-usecase1/cosim_example_demos/TVB-NEST-demo/tvb_sim/TVB_with_cosim_with_steering.py</routine_code>
                 <routine_arguments>
                     <!-- <argv_1_comm_file>{CO_SIM_RESULTS_DIR}{CO_SIM_INPUT_FILE}</argv_1_comm_file>
                     <argv_2_delay>{CO_SIM_DELAY}</argv_2_delay> -->
