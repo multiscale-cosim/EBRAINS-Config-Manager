@@ -15,7 +15,10 @@ import os
 import xml
 
 # Co-Simulator imports
-import common
+from EBRAINS_ConfigManager.workflow_configuraitons_manager.xml_parsers import enums
+from EBRAINS_ConfigManager.workflow_configuraitons_manager.xml_parsers import utils
+from EBRAINS_ConfigManager.workflow_configuraitons_manager.xml_parsers import xml_tags
+from EBRAINS_ConfigManager.workflow_configuraitons_manager.xml_parsers import exceptions
 
 
 class XmlManager(object):
@@ -57,7 +60,7 @@ class XmlManager(object):
     def initialize_xml_elements(self):
         # proper initialization must be implemented in the sub-class
         self._logger.debug('invoking initialize_xml_elements from XmlManager super class')
-        return common.enums.XmlManagerReturnCodes.XML_WRONG_MANAGER_ERROR
+        return enums.XmlManagerReturnCodes.XML_WRONG_MANAGER_ERROR
 
     def load_xml_into_dict(self):
         """
@@ -70,11 +73,11 @@ class XmlManager(object):
         """
         if not os.path.isfile(self._xml_filename):
             self._logger.error('{} does not exist'.format(self._xml_filename))
-            return common.enums.XmlManagerReturnCodes.XML_FILE_NOT_FOUND
+            return enums.XmlManagerReturnCodes.XML_FILE_NOT_FOUND
 
         if not os.access(self._xml_filename, os.R_OK):
             self._logger.error('{} cannot be open, check access permissions'.format(self._xml_filename))
-            return common.enums.XmlManagerReturnCodes.XML_FILE_ACCESS_ERROR
+            return enums.XmlManagerReturnCodes.XML_FILE_ACCESS_ERROR
 
         try:
             self._whole_xml_dict = self._configuration_manager.get_configuration_settings(
@@ -82,15 +85,15 @@ class XmlManager(object):
                 component=self._component_xml_tag)
         except xml.etree.ElementTree.ParseError:
             self._logger.error('{} cannot be loaded, check the XML format'.format(self._xml_filename))
-            return common.enums.XmlManagerReturnCodes.XML_FORMAT_ERROR
+            return enums.XmlManagerReturnCodes.XML_FORMAT_ERROR
         except LookupError:
             self._logger.error(
                 '{} cannot be loaded, <{}> tag not found'.format(self._xml_filename, self._component_xml_tag))
-            return common.enums.XmlManagerReturnCodes.XML_FORMAT_ERROR
+            return enums.XmlManagerReturnCodes.XML_FORMAT_ERROR
         else:
             self._logger.info('{} loaded to be processed'.format(self._xml_filename))
 
-        return common.enums.XmlManagerReturnCodes.XML_OK
+        return enums.XmlManagerReturnCodes.XML_OK
 
     def split_whole_xml_dict_into_dict_by_sections(self):
         """
@@ -104,7 +107,7 @@ class XmlManager(object):
         for xml_main_tag in self._whole_xml_dict:
             self._main_xml_sections_dicts_dict[xml_main_tag] = self._whole_xml_dict[xml_main_tag]
 
-        return common.enums.XmlManagerReturnCodes.XML_OK
+        return enums.XmlManagerReturnCodes.XML_OK
 
     def _build_variables_dict_from_xml_main_dicts(self):
         """
@@ -118,16 +121,16 @@ class XmlManager(object):
         self._variables_dict = {}
 
         try:
-            xml_variables_dict = self._main_xml_sections_dicts_dict[common.xml_tags.CO_SIM_XML_VARIABLES]
+            xml_variables_dict = self._main_xml_sections_dicts_dict[xml_tags.CO_SIM_XML_VARIABLES]
         except KeyError:
             self._logger.error('{} has no <{}>...</{}> section'.format(self._xml_filename,
-                                                                       common.xml_tags.CO_SIM_XML_VARIABLES,
-                                                                       common.xml_tags.CO_SIM_XML_VARIABLES))
-            return common.enums.XmlManagerReturnCodes.XML_TAG_ERROR
+                                                                       xml_tags.CO_SIM_XML_VARIABLES,
+                                                                       xml_tags.CO_SIM_XML_VARIABLES))
+            return enums.XmlManagerReturnCodes.XML_TAG_ERROR
 
         if not xml_variables_dict:
             self._logger.info('{} does not contains defined co-simulation variables')
-            return common.enums.XmlManagerReturnCodes.XML_OK
+            return enums.XmlManagerReturnCodes.XML_OK
 
         for key, value in xml_variables_dict.items():
             # key   -> XML tag referring to the variable name, e.g. var_000
@@ -136,28 +139,28 @@ class XmlManager(object):
 
             # getting the variable name
             try:
-                variable_name = value[common.xml_tags.CO_SIM_XML_VARIABLE_NAME]
+                variable_name = value[xml_tags.CO_SIM_XML_VARIABLE_NAME]
             except KeyError:
                 self._logger.error('{} contains {} with no <{}> tag'.format(self._xml_filename,
                                                                             key,
-                                                                            common.xml_tags.CO_SIM_XML_VARIABLE_NAME))
-                return common.enums.XmlManagerReturnCodes.XML_TAG_ERROR
+                                                                            xml_tags.CO_SIM_XML_VARIABLE_NAME))
+                return enums.XmlManagerReturnCodes.XML_TAG_ERROR
 
             # getting the variable value
             # NOTE: The value could contain reference to environment variables, e.g. ${ENV_VAR}
             #       or Co-Simulator variables, e.g. CO_SIM_*
             #       They will be transformed into values
             try:
-                variable_value = value[common.xml_tags.CO_SIM_XML_VARIABLE_VALUE]
+                variable_value = value[xml_tags.CO_SIM_XML_VARIABLE_VALUE]
             except KeyError:
                 self._logger.error('{} contains {} with no <{}> tag'.format(self._xml_filename,
                                                                             key,
-                                                                            common.xml_tags.CO_SIM_XML_VARIABLE_VALUE))
-                return common.enums.XmlManagerReturnCodes.XML_TAG_ERROR
+                                                                            xml_tags.CO_SIM_XML_VARIABLE_VALUE))
+                return enums.XmlManagerReturnCodes.XML_TAG_ERROR
 
             self._variables_dict[variable_name] = variable_value
 
-        return common.enums.XmlManagerReturnCodes.XML_OK
+        return enums.XmlManagerReturnCodes.XML_OK
 
     def _build_parameters_dict_from_xml_main_dicts(self):
         """
@@ -171,12 +174,12 @@ class XmlManager(object):
         self._parameters_dict = {}
 
         try:
-            xml_parameters_dict = self._main_xml_sections_dicts_dict[common.xml_tags.CO_SIM_XML_PARAMETERS]
+            xml_parameters_dict = self._main_xml_sections_dicts_dict[xml_tags.CO_SIM_XML_PARAMETERS]
         except KeyError:
             self._logger.error('{} has no <{}>...</{}> section'.format(self._xml_filename,
-                                                                       common.xml_tags.CO_SIM_XML_PARAMETERS,
-                                                                       common.xml_tags.CO_SIM_XML_PARAMETERS))
-            return common.enums.XmlManagerReturnCodes.XML_TAG_ERROR
+                                                                       xml_tags.CO_SIM_XML_PARAMETERS,
+                                                                       xml_tags.CO_SIM_XML_PARAMETERS))
+            return enums.XmlManagerReturnCodes.XML_TAG_ERROR
 
         # In this point, xml_parameters_dict must content the representation of the XML parameters sections,
         # meaning that at least one parameter element is expected even though this is a mock one
@@ -188,25 +191,25 @@ class XmlManager(object):
 
             # getting the parameter name
             try:
-                parameter_name = value[common.xml_tags.CO_SIM_XML_PARAMETER_NAME]
+                parameter_name = value[xml_tags.CO_SIM_XML_PARAMETER_NAME]
             except KeyError:
                 self._logger.error('{} contains {} with no <{}> tag'.format(self._xml_filename,
                                                                             key,
-                                                                            common.xml_tags.CO_SIM_XML_PARAMETER_NAME))
-                return common.enums.XmlManagerReturnCodes.XML_TAG_ERROR
+                                                                            xml_tags.CO_SIM_XML_PARAMETER_NAME))
+                return enums.XmlManagerReturnCodes.XML_TAG_ERROR
 
             # getting the parameter value
             try:
-                parameter_value = value[common.xml_tags.CO_SIM_XML_PARAMETER_VALUE]
+                parameter_value = value[xml_tags.CO_SIM_XML_PARAMETER_VALUE]
             except KeyError:
                 self._logger.error('{} contains {} with no <{}> tag'.format(self._xml_filename,
                                                                             key,
-                                                                            common.xml_tags.CO_SIM_XML_PARAMETER_VALUE))
-                return common.enums.XmlManagerReturnCodes.XML_TAG_ERROR
+                                                                            xml_tags.CO_SIM_XML_PARAMETER_VALUE))
+                return enums.XmlManagerReturnCodes.XML_TAG_ERROR
 
             self._parameters_dict[parameter_name] = parameter_value
 
-        return common.enums.XmlManagerReturnCodes.XML_OK
+        return enums.XmlManagerReturnCodes.XML_OK
 
     def build_particular_sections_dicts(self):
         """
@@ -217,7 +220,7 @@ class XmlManager(object):
             XML_OK - Just to by pass the checking when the method is not defined on the sub-class
         """
 
-        return common.enums.XmlManagerReturnCodes.XML_OK
+        return enums.XmlManagerReturnCodes.XML_OK
 
     def __transform_environment_variables_into_values(self, input_dictionary=None):
         """
@@ -247,15 +250,15 @@ class XmlManager(object):
             functional_variable_value = value
 
             try:
-                runtime_variable_value = common.utils.transform_environment_variables_into_values(
+                runtime_variable_value = utils.transform_environment_variables_into_values(
                     functional_variable_value=functional_variable_value)
                 # replacing the run-time value of the variable after having been transformed
                 input_dictionary[key] = runtime_variable_value
-            except common.exceptions.EnvironmentVariableNotSet as EnvironmentVariableNotSet:
+            except exceptions.EnvironmentVariableNotSet as EnvironmentVariableNotSet:
                 self._logger.error(EnvironmentVariableNotSet)
-                return common.enums.XmlManagerReturnCodes.XML_ENVIRONMENT_VARIABLE_ERROR
+                return enums.XmlManagerReturnCodes.XML_ENVIRONMENT_VARIABLE_ERROR
 
-        return common.enums.XmlManagerReturnCodes.XML_OK
+        return enums.XmlManagerReturnCodes.XML_OK
 
     def dissect(self):
         """
@@ -280,12 +283,12 @@ class XmlManager(object):
         self.initialize_xml_elements()
 
         # Step 1 - Loading XML into a _whole_xml_dict attribute
-        if not self.load_xml_into_dict() == common.enums.XmlManagerReturnCodes.XML_OK:
-            return common.enums.XmlManagerReturnCodes.XML_FORMAT_ERROR
+        if not self.load_xml_into_dict() == enums.XmlManagerReturnCodes.XML_OK:
+            return enums.XmlManagerReturnCodes.XML_FORMAT_ERROR
 
         # Step 2 - Splitting the whole dict into different dicts based on main tags, e.g. variables, parameters, etc
-        if not self.split_whole_xml_dict_into_dict_by_sections() == common.enums.XmlManagerReturnCodes.XML_OK:
-            return common.enums.XmlManagerReturnCodes.XML_TAG_ERROR
+        if not self.split_whole_xml_dict_into_dict_by_sections() == enums.XmlManagerReturnCodes.XML_OK:
+            return enums.XmlManagerReturnCodes.XML_TAG_ERROR
 
         # In this point, _main_xml_sections_dicts_dict dictionary contains the dictionaries based on the
         # main expected tags on the Co-Simulation Plan XML configuration file,
@@ -294,26 +297,26 @@ class XmlManager(object):
 
         # Step 3 - Variables
         # Step 3.1  - Creating the variables dict by gathering the elements defined in the XML file variables section
-        if not self._build_variables_dict_from_xml_main_dicts() == common.enums.XmlManagerReturnCodes.XML_OK:
-            return common.enums.XmlManagerReturnCodes.XML_VALUE_ERROR
+        if not self._build_variables_dict_from_xml_main_dicts() == enums.XmlManagerReturnCodes.XML_OK:
+            return enums.XmlManagerReturnCodes.XML_VALUE_ERROR
 
         # Step 3.2 - Transforming environment variables references into run-time values
         if not self.__transform_environment_variables_into_values(input_dictionary=self._variables_dict) == \
-               common.enums.XmlManagerReturnCodes.XML_OK:
-            return common.enums.XmlManagerReturnCodes.XML_ENVIRONMENT_VARIABLE_ERROR
+               enums.XmlManagerReturnCodes.XML_OK:
+            return enums.XmlManagerReturnCodes.XML_ENVIRONMENT_VARIABLE_ERROR
 
         # Step 4 - Parameters
         # Step 4.1  -   Creating the parameters dict by getting the elements
         #               defined in the XML file parameters section
-        if not self._build_parameters_dict_from_xml_main_dicts() == common.enums.XmlManagerReturnCodes.XML_OK:
-            return common.enums.XmlManagerReturnCodes.XML_VALUE_ERROR
+        if not self._build_parameters_dict_from_xml_main_dicts() == enums.XmlManagerReturnCodes.XML_OK:
+            return enums.XmlManagerReturnCodes.XML_VALUE_ERROR
 
         # Step 99 - Calling the ending method for managing the particular XML sections,
         #           if it is defined in the sub-class, otherwise the abstract method will be called.
-        if not self.build_particular_sections_dicts() == common.enums.XmlManagerReturnCodes.XML_OK:
-            return common.enums.XmlManagerReturnCodes.XML_VALUE_ERROR
+        if not self.build_particular_sections_dicts() == enums.XmlManagerReturnCodes.XML_OK:
+            return enums.XmlManagerReturnCodes.XML_VALUE_ERROR
 
-        return common.enums.XmlManagerReturnCodes.XML_OK
+        return enums.XmlManagerReturnCodes.XML_OK
 
     def get_parameters_dict(self):
         """

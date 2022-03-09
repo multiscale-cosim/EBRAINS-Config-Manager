@@ -14,7 +14,13 @@
 import os
 
 # Co-Simulator's imports
-import common
+from EBRAINS_ConfigManager.workflow_configuraitons_manager.xml_parsers import utils
+from EBRAINS_ConfigManager.workflow_configuraitons_manager.xml_parsers import exceptions
+from EBRAINS_ConfigManager.workflow_configuraitons_manager.xml_parsers import enums
+from EBRAINS_ConfigManager.workflow_configuraitons_manager.xml_parsers import variables
+from EBRAINS_ConfigManager.workflow_configuraitons_manager.xml_parsers import xml_tags
+from EBRAINS_ConfigManager.workflow_configuraitons_manager.xml_parsers import constants
+from EBRAINS_ConfigManager.workflow_configuraitons_manager.xml_parsers.xml_manager import XmlManager
 
 
 class ActionsXmlManager(object):
@@ -48,21 +54,21 @@ class ActionsXmlManager(object):
         for index, item in enumerate(popen_arguments_list):
             try:
                 popen_arguments_list[index] = \
-                    common.utils.transform_co_simulation_variables_into_values(variables_manager=self.__variables_manager,
+                    utils.transform_co_simulation_variables_into_values(variables_manager=self.__variables_manager,
                                                                                functional_variable_value=item)
             # except KeyError:
             #     self.__logger.error('{} references to a CO_SIM_ variable not have been set yet'.format(item))
-            #     return common.enums.XmlManagerReturnCodes.XML_CO_SIM_VARIABLE_ERROR
-            except common.exceptions.CoSimVariableNotFound:
+            #     return enums.XmlManagerReturnCodes.XML_CO_SIM_VARIABLE_ERROR
+            except exceptions.CoSimVariableNotFound:
                 self.__logger.error('{} is being referenced, nevertheless the variable has not been set yet'.format(item))
-                return common.enums.XmlManagerReturnCodes.XML_CO_SIM_VARIABLE_ERROR
+                return enums.XmlManagerReturnCodes.XML_CO_SIM_VARIABLE_ERROR
 
 
         # Removing those items with empty value, i.e. equal to ''
-        if self.__variables_manager.get_value(variable_name=common.variables.CO_SIM_EMPTY) in popen_arguments_list:
-            popen_arguments_list.remove(self.__variables_manager.get_value(variable_name=common.variables.CO_SIM_EMPTY))
+        if self.__variables_manager.get_value(variable_name=variables.CO_SIM_EMPTY) in popen_arguments_list:
+            popen_arguments_list.remove(self.__variables_manager.get_value(variable_name=variables.CO_SIM_EMPTY))
 
-        return common.enums.XmlManagerReturnCodes.XML_OK
+        return enums.XmlManagerReturnCodes.XML_OK
 
     def dissect(self):
         """
@@ -74,16 +80,16 @@ class ActionsXmlManager(object):
             XML_OK: All actions XML files were processed correctly
         """
         actions_xml_file_location = \
-            self.__variables_manager.get_value(common.variables.CO_SIM_ACTIONS_DIR)
+            self.__variables_manager.get_value(variables.CO_SIM_ACTIONS_DIR)
 
         for key, value in self.__action_plan.items():
             # key = action_NNN <- the identification in the action plan
-            if value[common.xml_tags.CO_SIM_XML_PLAN_ACTION_TYPE] == common.constants.CO_SIM_ACTION:
+            if value[xml_tags.CO_SIM_XML_PLAN_ACTION_TYPE] == constants.CO_SIM_ACTION:
                 # taking into account only actions (scripts or binaries) able to be executed
 
                 current_action_id = key  # action_NNN
                 current_action_xml_path_filename = os.sep.join([actions_xml_file_location,
-                                                                value[common.xml_tags.CO_SIM_XML_PLAN_ACTION_XML],
+                                                                value[xml_tags.CO_SIM_XML_PLAN_ACTION_XML],
                                                                 ])
 
                 xml_action_manager = self._CoSimulationActionXmlManager(
@@ -96,7 +102,7 @@ class ActionsXmlManager(object):
                 # there will be an attribute (list) with the Popen arguments
                 dissect_return = xml_action_manager.dissect()
 
-                if not dissect_return == common.enums.XmlManagerReturnCodes.XML_OK:
+                if not dissect_return == enums.XmlManagerReturnCodes.XML_OK:
                     self.__logger.error('Error found dissecting {}'.format(current_action_xml_path_filename))
                     return dissect_return
                 # raw arguments values gathered from XML configuration file
@@ -105,14 +111,14 @@ class ActionsXmlManager(object):
                 # NOTE: the CO_SIM_* variables must have the run-time values assigned in this point,
                 # otherwise, the Co-Simulation process will not be performed properly
                 if not self.__transform_co_sim_variables_into_values(popen_arguments_list=popen_arguments_list) == \
-                       common.enums.XmlManagerReturnCodes.XML_OK:
+                       enums.XmlManagerReturnCodes.XML_OK:
                     self.__logger.error(
                         'Error found transforming into values the CO_SIM_ variables found in {}'.format(
                             current_action_xml_path_filename))
-                    return common.enums.XmlManagerReturnCodes.XML_CO_SIM_VARIABLE_ERROR
+                    return enums.XmlManagerReturnCodes.XML_CO_SIM_VARIABLE_ERROR
                 self.__actions_popen_arguments_dict[key] = popen_arguments_list
 
-        return common.enums.XmlManagerReturnCodes.XML_OK
+        return enums.XmlManagerReturnCodes.XML_OK
 
     def get_actions_popen_arguments_dict(self):
         """
@@ -122,7 +128,8 @@ class ActionsXmlManager(object):
         """
         return self.__actions_popen_arguments_dict
 
-    class _CoSimulationActionXmlManager(common.XmlManager):
+
+    class _CoSimulationActionXmlManager(XmlManager):
         """
             XML Manager for the Co-Simulation Actions XML files
         """
@@ -132,7 +139,7 @@ class ActionsXmlManager(object):
 
         def initialize_xml_elements(self):
             # TO BE DONE: there should be a global XML file where tags are defined
-            self._component_xml_tag = common.xml_tags.CO_SIM_XML_ACTION_ROOT_TAG
+            self._component_xml_tag = xml_tags.CO_SIM_XML_ACTION_ROOT_TAG
 
         def __dissect_launcher_section(self):
             """
@@ -144,27 +151,27 @@ class ActionsXmlManager(object):
             # peformer bynary
             try:
                 self.__Popen_arguments_list.append(
-                    self.__launcher_dict[common.xml_tags.CO_SIM_XML_ACTION_LAUNCHER_COMMAND])
+                    self.__launcher_dict[xml_tags.CO_SIM_XML_ACTION_LAUNCHER_COMMAND])
             except KeyError:
                 self._logger.error('{} has no <{}>...</{}> section'.format(self._xml_filename,
-                                                                           common.xml_tags.CO_SIM_XML_ACTION_LAUNCHER_COMMAND,
-                                                                           common.xml_tags.CO_SIM_XML_ACTION_LAUNCHER_COMMAND))
-                return common.enums.XmlManagerReturnCodes.XML_TAG_ERROR
+                                                                           xml_tags.CO_SIM_XML_ACTION_LAUNCHER_COMMAND,
+                                                                           xml_tags.CO_SIM_XML_ACTION_LAUNCHER_COMMAND))
+                return enums.XmlManagerReturnCodes.XML_TAG_ERROR
 
             # arguments for the launcher binary
             try:
-                launcher_arguments_dict = self.__launcher_dict[common.xml_tags.CO_SIM_XML_ACTION_LAUNCHER_ARGUMENTS]
+                launcher_arguments_dict = self.__launcher_dict[xml_tags.CO_SIM_XML_ACTION_LAUNCHER_ARGUMENTS]
             except KeyError:
                 self._logger.error('{} has no <{}>...</{}> section'.format(self._xml_filename,
-                                                                           common.xml_tags.CO_SIM_XML_ACTION_LAUNCHER_ARGUMENTS,
-                                                                           common.xml_tags.CO_SIM_XML_ACTION_LAUNCHER_ARGUMENTS))
-                return common.enums.XmlManagerReturnCodes.XML_TAG_ERROR
+                                                                           xml_tags.CO_SIM_XML_ACTION_LAUNCHER_ARGUMENTS,
+                                                                           xml_tags.CO_SIM_XML_ACTION_LAUNCHER_ARGUMENTS))
+                return enums.XmlManagerReturnCodes.XML_TAG_ERROR
 
             for key, value in launcher_arguments_dict.items():
                 # key = argv_NN -> Argument identification
                 self.__Popen_arguments_list.append(value)
 
-            return common.enums.XmlManagerReturnCodes.XML_OK
+            return enums.XmlManagerReturnCodes.XML_OK
         
         def __dissect_performer_section(self):
             """
@@ -176,27 +183,27 @@ class ActionsXmlManager(object):
             # peformer bynary
             try:
                 self.__Popen_arguments_list.append(
-                    self.__performer_dict[common.xml_tags.CO_SIM_XML_ACTION_PERFORMER_BINARY])
+                    self.__performer_dict[xml_tags.CO_SIM_XML_ACTION_PERFORMER_BINARY])
             except KeyError:
                 self._logger.error('{} has no <{}>...</{}> section'.format(self._xml_filename,
-                                                                           common.xml_tags.CO_SIM_XML_ACTION_PERFORMER_BINARY,
-                                                                           common.xml_tags.CO_SIM_XML_ACTION_PERFORMER_BINARY))
-                return common.enums.XmlManagerReturnCodes.XML_TAG_ERROR
+                                                                           xml_tags.CO_SIM_XML_ACTION_PERFORMER_BINARY,
+                                                                           xml_tags.CO_SIM_XML_ACTION_PERFORMER_BINARY))
+                return enums.XmlManagerReturnCodes.XML_TAG_ERROR
 
             # arguments for the performer binary
             try:
-                performer_arguments_dict = self.__performer_dict[common.xml_tags.CO_SIM_XML_ACTION_PERFORMER_ARGUMENTS]
+                performer_arguments_dict = self.__performer_dict[xml_tags.CO_SIM_XML_ACTION_PERFORMER_ARGUMENTS]
             except KeyError:
                 self._logger.error('{} has no <{}>...</{}> section'.format(self._xml_filename,
-                                                                           common.xml_tags.CO_SIM_XML_ACTION_PERFORMER_ARGUMENTS,
-                                                                           common.xml_tags.CO_SIM_XML_ACTION_PERFORMER_ARGUMENTS))
-                return common.enums.XmlManagerReturnCodes.XML_TAG_ERROR
+                                                                           xml_tags.CO_SIM_XML_ACTION_PERFORMER_ARGUMENTS,
+                                                                           xml_tags.CO_SIM_XML_ACTION_PERFORMER_ARGUMENTS))
+                return enums.XmlManagerReturnCodes.XML_TAG_ERROR
 
             for key, value in performer_arguments_dict.items():
                 # key = argv_NN -> Argument identification
                 self.__Popen_arguments_list.append(value)
 
-            return common.enums.XmlManagerReturnCodes.XML_OK
+            return enums.XmlManagerReturnCodes.XML_OK
 
         def __dissect_routine_section(self):
             """
@@ -208,27 +215,27 @@ class ActionsXmlManager(object):
             # peformer bynary
             try:
                 self.__Popen_arguments_list.append(
-                    self.__routine_dict[common.xml_tags.CO_SIM_XML_ACTION_ROUTINE_CODE])
+                    self.__routine_dict[xml_tags.CO_SIM_XML_ACTION_ROUTINE_CODE])
             except KeyError:
                 self._logger.error('{} has no <{}>...</{}> section'.format(self._xml_filename,
-                                                                           common.xml_tags.CO_SIM_XML_ACTION_ROUTINE_CODE,
-                                                                           common.xml_tags.CO_SIM_XML_ACTION_ROUTINE_CODE))
-                return common.enums.XmlManagerReturnCodes.XML_TAG_ERROR
+                                                                           xml_tags.CO_SIM_XML_ACTION_ROUTINE_CODE,
+                                                                           xml_tags.CO_SIM_XML_ACTION_ROUTINE_CODE))
+                return enums.XmlManagerReturnCodes.XML_TAG_ERROR
 
             # arguments for the routine binary
             try:
-                routine_arguments_dict = self.__routine_dict[common.xml_tags.CO_SIM_XML_ACTION_ROUTINE_ARGUMENTS]
+                routine_arguments_dict = self.__routine_dict[xml_tags.CO_SIM_XML_ACTION_ROUTINE_ARGUMENTS]
             except KeyError:
                 self._logger.error('{} has no <{}>...</{}> section'.format(self._xml_filename,
-                                                                           common.xml_tags.CO_SIM_XML_ACTION_ROUTINE_ARGUMENTS,
-                                                                           common.xml_tags.CO_SIM_XML_ACTION_ROUTINE_ARGUMENTS))
-                return common.enums.XmlManagerReturnCodes.XML_TAG_ERROR
+                                                                           xml_tags.CO_SIM_XML_ACTION_ROUTINE_ARGUMENTS,
+                                                                           xml_tags.CO_SIM_XML_ACTION_ROUTINE_ARGUMENTS))
+                return enums.XmlManagerReturnCodes.XML_TAG_ERROR
 
             for key, value in routine_arguments_dict.items():
                 # key = argv_NN -> Argument identification
                 self.__Popen_arguments_list.append(value)
 
-            return common.enums.XmlManagerReturnCodes.XML_OK
+            return enums.XmlManagerReturnCodes.XML_OK
 
         def __build_Popen_arguments_list(self):
             """
@@ -242,49 +249,49 @@ class ActionsXmlManager(object):
             xml_action_dict = {}
 
             try:
-                xml_action_dict = self._main_xml_sections_dicts_dict[common.xml_tags.CO_SIM_XML_ACTION]
+                xml_action_dict = self._main_xml_sections_dicts_dict[xml_tags.CO_SIM_XML_ACTION]
             except KeyError:
                 self._logger.error('{} has no <{}>...</{}> section'.format(self._xml_filename,
-                                                                           common.xml_tags.CO_SIM_XML_ACTION,
-                                                                           common.xml_tags.CO_SIM_XML_ACTION))
-                return common.enums.XmlManagerReturnCodes.XML_TAG_ERROR
+                                                                           xml_tags.CO_SIM_XML_ACTION,
+                                                                           xml_tags.CO_SIM_XML_ACTION))
+                return enums.XmlManagerReturnCodes.XML_TAG_ERROR
 
             # launcher
             try:
-                self.__launcher_dict = xml_action_dict[common.xml_tags.CO_SIM_XML_ACTION_LAUNCHER]
+                self.__launcher_dict = xml_action_dict[xml_tags.CO_SIM_XML_ACTION_LAUNCHER]
             except KeyError:
                 self._logger.error('{} has no <{}>...</{}> section'.format(self._xml_filename,
-                                                                           common.xml_tags.CO_SIM_XML_ACTION_PERFORMER,
-                                                                           common.xml_tags.CO_SIM_XML_ACTION_PERFORMER))
-                return common.enums.XmlManagerReturnCodes.XML_TAG_ERROR
+                                                                           xml_tags.CO_SIM_XML_ACTION_PERFORMER,
+                                                                           xml_tags.CO_SIM_XML_ACTION_PERFORMER))
+                return enums.XmlManagerReturnCodes.XML_TAG_ERROR
 
-            if not self.__dissect_launcher_section() == common.enums.XmlManagerReturnCodes.XML_OK:
-                return common.enums.XmlManagerReturnCodes.XML_TAG_ERROR
+            if not self.__dissect_launcher_section() == enums.XmlManagerReturnCodes.XML_OK:
+                return enums.XmlManagerReturnCodes.XML_TAG_ERROR
 
             # performer
             try:
-                self.__performer_dict = xml_action_dict[common.xml_tags.CO_SIM_XML_ACTION_PERFORMER]
+                self.__performer_dict = xml_action_dict[xml_tags.CO_SIM_XML_ACTION_PERFORMER]
             except KeyError:
                 self._logger.error('{} has no <{}>...</{}> section'.format(self._xml_filename,
-                                                                           common.xml_tags.CO_SIM_XML_ACTION_PERFORMER,
-                                                                           common.xml_tags.CO_SIM_XML_ACTION_PERFORMER))
-                return common.enums.XmlManagerReturnCodes.XML_TAG_ERROR
+                                                                           xml_tags.CO_SIM_XML_ACTION_PERFORMER,
+                                                                           xml_tags.CO_SIM_XML_ACTION_PERFORMER))
+                return enums.XmlManagerReturnCodes.XML_TAG_ERROR
 
-            if not self.__dissect_performer_section() == common.enums.XmlManagerReturnCodes.XML_OK:
-                return common.enums.XmlManagerReturnCodes.XML_TAG_ERROR
+            if not self.__dissect_performer_section() == enums.XmlManagerReturnCodes.XML_OK:
+                return enums.XmlManagerReturnCodes.XML_TAG_ERROR
 
             # routine
             try:
-                self.__routine_dict = xml_action_dict[common.xml_tags.CO_SIM_XML_ACTION_ROUTINE]
+                self.__routine_dict = xml_action_dict[xml_tags.CO_SIM_XML_ACTION_ROUTINE]
             except KeyError:
                 self._logger.error('{} has no <{}>...</{}> section'.format(self._xml_filename,
-                                                                           common.xml_tags.CO_SIM_XML_ACTION_ROUTINE,
-                                                                           common.xml_tags.CO_SIM_XML_ACTION_ROUTINE))
+                                                                           xml_tags.CO_SIM_XML_ACTION_ROUTINE,
+                                                                           xml_tags.CO_SIM_XML_ACTION_ROUTINE))
 
-            if not self.__dissect_routine_section() == common.enums.XmlManagerReturnCodes.XML_OK:
-                return common.enums.XmlManagerReturnCodes.XML_TAG_ERROR
+            if not self.__dissect_routine_section() == enums.XmlManagerReturnCodes.XML_OK:
+                return enums.XmlManagerReturnCodes.XML_TAG_ERROR
 
-            return common.enums.XmlManagerReturnCodes.XML_OK
+            return enums.XmlManagerReturnCodes.XML_OK
 
         def build_particular_sections_dicts(self):
             """

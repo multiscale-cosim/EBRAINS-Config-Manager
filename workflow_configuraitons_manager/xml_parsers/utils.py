@@ -15,7 +15,8 @@ import os
 import re
 
 # Co-Simulator imports
-import common
+from EBRAINS_ConfigManager.workflow_configuraitons_manager.xml_parsers import constants
+from EBRAINS_ConfigManager.workflow_configuraitons_manager.xml_parsers import exceptions
 
 
 def transform_co_simulation_variables_into_values(variables_manager=None, functional_variable_value=None):
@@ -32,7 +33,7 @@ def transform_co_simulation_variables_into_values(variables_manager=None, functi
     transformed_variable_value = ''
 
     # finding co_simulation variables
-    split_variable_list = re.split(common.constants.CO_SIM_REGEX_CO_SIM_VARIABLE, functional_variable_value)
+    split_variable_list = re.split(constants.CO_SIM_REGEX_CO_SIM_VARIABLE, functional_variable_value)
 
     next_piece_is_an_co_simulation_variable_name = False
     next_piece_is_the_closing_curly_brace = False
@@ -49,7 +50,7 @@ def transform_co_simulation_variables_into_values(variables_manager=None, functi
                 transformed_variable_value += variables_manager.get_value('CO_SIM_'+current_piece)
             except KeyError:
                 transformed_variable_value = ''
-                raise common.exceptions.CoSimVariableNotFound(current_piece)
+                raise exceptions.CoSimVariableNotFound(current_piece)
                 break
         elif next_piece_is_the_closing_curly_brace:
             next_piece_is_the_closing_curly_brace = False
@@ -76,7 +77,7 @@ def transform_environment_variables_into_values(functional_variable_value=None):
     transformed_variable_value = ''
 
     # finding environment variables
-    split_variable_list = re.split(common.constants.CO_SIM_REGEX_ENVIRONMENT_VARIABLE, functional_variable_value)
+    split_variable_list = re.split(constants.CO_SIM_REGEX_ENVIRONMENT_VARIABLE, functional_variable_value)
 
     next_piece_is_an_environment_variable_name = False
     next_piece_is_the_closing_curly_brace = False
@@ -93,7 +94,7 @@ def transform_environment_variables_into_values(functional_variable_value=None):
                 transformed_variable_value += os.environ[current_piece]
             except KeyError:
                 transformed_variable_value = ''
-                raise common.exceptions.EnvironmentVariableNotSet(current_piece)
+                raise exceptions.EnvironmentVariableNotSet(current_piece)
                 break
         elif next_piece_is_the_closing_curly_brace:
             next_piece_is_the_closing_curly_brace = False

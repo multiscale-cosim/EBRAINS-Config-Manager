@@ -8,8 +8,9 @@ import os
 import getpass
 from pathlib import Path
 from datetime import datetime
-from utils import directory_utils
-from default_directories_enum import DefaultDirectories
+
+from common.utils import directory_utils
+from EBRAINS_ConfigManager.global_configurations_manager.xml_parsers.default_directories_enum import DefaultDirectories
 
 
 class MetaDirectoriesManager(type):

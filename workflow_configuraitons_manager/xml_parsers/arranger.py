@@ -14,7 +14,10 @@
 import os
 
 # Co-Simulator imports
-import common
+from EBRAINS_ConfigManager.workflow_configuraitons_manager.xml_parsers import enums
+from EBRAINS_ConfigManager.workflow_configuraitons_manager.xml_parsers import xml_tags
+from EBRAINS_ConfigManager.workflow_configuraitons_manager.xml_parsers import utils
+from EBRAINS_ConfigManager.workflow_configuraitons_manager.xml_parsers import constants
 
 
 class Arranger(object):
@@ -44,24 +47,24 @@ class Arranger(object):
             #
         except OSError:
             self.__logger.error('{} making dir(s) went wrong'.format(dir_to_be_created))
-            return common.enums.ArrangerReturnCodes.MKDIR_ERROR
+            return enums.ArrangerReturnCodes.MKDIR_ERROR
 
-        return common.enums.ArrangerReturnCodes.OK
+        return enums.ArrangerReturnCodes.OK
 
     def arrange(self):
 
         for key, value in self.__items_to_be_arranged_dict.items():
             # key = Arrangement XML id, e.g. arr_01
-            arrangement_duty = value[common.xml_tags.CO_SIM_XML_ARRANGEMENT_DUTY]
-            raw_arrange_what = value[common.xml_tags.CO_SIM_XML_ARRANGEMENT_WHAT]
+            arrangement_duty = value[xml_tags.CO_SIM_XML_ARRANGEMENT_DUTY]
+            raw_arrange_what = value[xml_tags.CO_SIM_XML_ARRANGEMENT_WHAT]
             transformed_arrange_what = \
-                common.utils.transform_co_simulation_variables_into_values(variables_manager=self.__variables_manager,
+                utils.transform_co_simulation_variables_into_values(variables_manager=self.__variables_manager,
                                                                            functional_variable_value=raw_arrange_what)
 
-            if arrangement_duty == common.constants.CO_SIM_ARRANGEMENT_DIR_CREATION:
+            if arrangement_duty == constants.CO_SIM_ARRANGEMENT_DIR_CREATION:
 
                 if not self.__dir_creation(dir_to_be_created=transformed_arrange_what) == \
-                       common.enums.ArrangerReturnCodes.OK:
-                    return common.enums.ArrangerReturnCodes.MKDIR_ERROR
+                       enums.ArrangerReturnCodes.OK:
+                    return enums.ArrangerReturnCodes.MKDIR_ERROR
 
-        return common.enums.ArrangerReturnCodes.OK
+        return enums.ArrangerReturnCodes.OK

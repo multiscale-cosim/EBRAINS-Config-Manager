@@ -17,7 +17,7 @@ import subprocess
 import time
 
 # Co-Simulator's imports
-import common
+from EBRAINS_ConfigManager.workflow_configuraitons_manager.xml_parsers import enums
 
 
 class Action:
@@ -75,11 +75,11 @@ class Action:
         except OSError as os_error_e:
             self.__logger.error('Action {} could not be spawned by Popen'.format(self.__action_xml_id))
             self.__logger.error('OSError: {}'.format(os_error_e.strerror))
-            return common.enums.ActionReturnCodes.OS_ERROR_EXCEPTION
+            return enums.ActionReturnCodes.OS_ERROR_EXCEPTION
         except ValueError:
             self.__logger.error('Action {} reports Popen arguments error'.format(self.__action_xml_id))
             self.__logger.error('ValueError: {}'.format(self.__action_popen_args_list))
-            return common.enums.ActionReturnCodes.VALUE_ERROR_EXCEPTION
+            return enums.ActionReturnCodes.VALUE_ERROR_EXCEPTION
         else:
             self.__logger.info('Action <{}> was spawned successfully'.format(self.__action_xml_id))
 
@@ -165,10 +165,10 @@ class Action:
         if not return_code == 0:
             self.__logger.error('Action {} went wrong, finished returning rc={}'.format(self.__action_xml_id,
                                                                                         return_code))
-            return common.enums.ActionReturnCodes.NOT_OK
+            return enums.ActionReturnCodes.NOT_OK
 
         self.__logger.info('Action <{}> finished properly.'.format(self.__action_xml_id))
-        return common.enums.ActionReturnCodes.OK
+        return enums.ActionReturnCodes.OK
 
     def get_action_xml_id(self):
         return self.__action_xml_id

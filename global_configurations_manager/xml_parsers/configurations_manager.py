@@ -5,10 +5,11 @@
 # ------------------------------------------------------------------------------
 
 from __future__ import annotations
-from xml_parser import Parser
-from config_logger import ConfigLogger
-from directories_manager import DirectoriesManager
-from default_directories_enum import DefaultDirectories
+
+from EBRAINS_ConfigManager.global_configurations_manager.xml_parsers.xml_parser import Parser
+from EBRAINS_ConfigManager.global_configurations_manager.xml_parsers.config_logger import ConfigLogger
+from EBRAINS_ConfigManager.global_configurations_manager.xml_parsers.directories_manager import DirectoriesManager
+from EBRAINS_ConfigManager.global_configurations_manager.xml_parsers.default_directories_enum import DefaultDirectories
 
 
 class ConfigurationsManager:

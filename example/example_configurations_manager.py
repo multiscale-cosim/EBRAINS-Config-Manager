@@ -4,8 +4,8 @@
 #  license agreements; and to You under the Apache License, Version 2.0. "
 # ------------------------------------------------------------------------------
 from pathlib import Path
-from python.configuration_manager.configurations_manager import ConfigurationsManager
-from python.configuration_manager.default_directories_enum import DefaultDirectories
+from EBRAINS_ConfigManager.global_configurations_manager.xml_parsers.configurations_manager import ConfigurationsManager
+from EBRAINS_ConfigManager.global_configurations_manager.xml_parsers.default_directories_enum import DefaultDirectories
 
 if __name__ == '__main__':
     ''' 

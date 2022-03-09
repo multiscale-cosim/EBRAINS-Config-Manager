@@ -13,10 +13,13 @@
 # ------------------------------------------------------------------------------
 
 # Co-Simulator's import
-import common
+from EBRAINS_ConfigManager.workflow_configuraitons_manager.xml_parsers import enums
+from EBRAINS_ConfigManager.workflow_configuraitons_manager.xml_parsers import xml_tags
+from EBRAINS_ConfigManager.workflow_configuraitons_manager.xml_parsers import constants
+from EBRAINS_ConfigManager.workflow_configuraitons_manager.xml_parsers.xml_manager import XmlManager
 
 
-class ParametersXmlManager(common.XmlManager):
+class ParametersXmlManager(XmlManager):
     """
         XML Manager for the Parameters XML file
     """
@@ -24,7 +27,7 @@ class ParametersXmlManager(common.XmlManager):
 
     def initialize_xml_elements(self):
         # TO BE DONE: there should be a global XML file where tags are defined
-        self._component_xml_tag = common.xml_tags.CO_SIM_XML_CO_SIM_PARAMS_ROOT_TAG
+        self._component_xml_tag = xml_tags.CO_SIM_XML_CO_SIM_PARAMS_ROOT_TAG
 
     def __build_parameters_for_json(self):
         """
@@ -38,42 +41,42 @@ class ParametersXmlManager(common.XmlManager):
 
         try:
             xml_co_sim_parameters_json_file = \
-                self._main_xml_sections_dicts_dict[common.xml_tags.CO_SIM_XML_CO_SIM_PARAMS_JSON_FILE]
+                self._main_xml_sections_dicts_dict[xml_tags.CO_SIM_XML_CO_SIM_PARAMS_JSON_FILE]
         except KeyError:
             self._logger.error('{} has no <{}>...</{}> section'.format(self._xml_filename,
-                                                                       common.xml_tags.CO_SIM_XML_CO_SIM_PARAMS_JSON_FILE,
-                                                                       common.xml_tags.CO_SIM_XML_CO_SIM_PARAMS_JSON_FILE))
-            return common.enums.XmlManagerReturnCodes.XML_TAG_ERROR
+                                                                       xml_tags.CO_SIM_XML_CO_SIM_PARAMS_JSON_FILE,
+                                                                       xml_tags.CO_SIM_XML_CO_SIM_PARAMS_JSON_FILE))
+            return enums.XmlManagerReturnCodes.XML_TAG_ERROR
 
         # filename (remains the same)
         try:
-            self.__co_simulation_parameters_for_json_dict[common.xml_tags.CO_SIM_XML_CO_SIM_PARAMS_FILENAME] = \
-                xml_co_sim_parameters_json_file[common.xml_tags.CO_SIM_XML_CO_SIM_PARAMS_FILENAME]    
+            self.__co_simulation_parameters_for_json_dict[xml_tags.CO_SIM_XML_CO_SIM_PARAMS_FILENAME] = \
+                xml_co_sim_parameters_json_file[xml_tags.CO_SIM_XML_CO_SIM_PARAMS_FILENAME]    
         except KeyError:
             self._logger.error('{} has no <{}>...</{}> section'.format(self._xml_filename,
-                                                                       common.xml_tags.CO_SIM_XML_CO_SIM_PARAMS_FILENAME,
-                                                                       common.xml_tags.CO_SIM_XML_CO_SIM_PARAMS_FILENAME))
-            return common.enums.XmlManagerReturnCodes.XML_TAG_ERROR
+                                                                       xml_tags.CO_SIM_XML_CO_SIM_PARAMS_FILENAME,
+                                                                       xml_tags.CO_SIM_XML_CO_SIM_PARAMS_FILENAME))
+            return enums.XmlManagerReturnCodes.XML_TAG_ERROR
         
         # root_object
         try:
-            json_root_object= xml_co_sim_parameters_json_file[common.xml_tags.CO_SIM_XML_CO_SIM_PARAMS_ROOT_OBJECT]
+            json_root_object= xml_co_sim_parameters_json_file[xml_tags.CO_SIM_XML_CO_SIM_PARAMS_ROOT_OBJECT]
         except KeyError:
             self._logger.error('{} has no <{}>...</{}> section'.format(self._xml_filename,
-                                                                       common.xml_tags.CO_SIM_XML_CO_SIM_PARAMS_ROOT_OBJECT,
-                                                                       common.xml_tags.CO_SIM_XML_CO_SIM_PARAMS_ROOT_OBJECT))
-            return common.enums.XmlManagerReturnCodes.XML_TAG_ERROR
+                                                                       xml_tags.CO_SIM_XML_CO_SIM_PARAMS_ROOT_OBJECT,
+                                                                       xml_tags.CO_SIM_XML_CO_SIM_PARAMS_ROOT_OBJECT))
+            return enums.XmlManagerReturnCodes.XML_TAG_ERROR
 
         # building the the dictionary to be dumped into a file by using JSON format
         xml_json_pairs_dict = {}
 
         try:
-            xml_json_pairs_dict = xml_co_sim_parameters_json_file[common.xml_tags.CO_SIM_XML_CO_SIM_PARAMS_PAIRS]
+            xml_json_pairs_dict = xml_co_sim_parameters_json_file[xml_tags.CO_SIM_XML_CO_SIM_PARAMS_PAIRS]
         except KeyError:
             self._logger.error('{} has no <{}>...</{}> section'.format(self._xml_filename,
-                                                                       common.xml_tags.CO_SIM_XML_CO_SIM_PARAMS_PAIRS,
-                                                                       common.xml_tags.CO_SIM_XML_CO_SIM_PARAMS_PAIRS))
-            return common.enums.XmlManagerReturnCodes.XML_TAG_ERROR
+                                                                       xml_tags.CO_SIM_XML_CO_SIM_PARAMS_PAIRS,
+                                                                       xml_tags.CO_SIM_XML_CO_SIM_PARAMS_PAIRS))
+            return enums.XmlManagerReturnCodes.XML_TAG_ERROR
 
         json_pair_dict = {}
 
@@ -83,35 +86,35 @@ class ParametersXmlManager(common.XmlManager):
 
             # json name
             try:
-                json_name = current_xml_json_pair_dict[common.xml_tags.CO_SIM_XML_CO_SIM_PARAMS_PAIR_NAME]
+                json_name = current_xml_json_pair_dict[xml_tags.CO_SIM_XML_CO_SIM_PARAMS_PAIR_NAME]
             except KeyError:
                 self._logger.error('{},{} has no <{}>...</{}> section'.format(self._xml_filename,
                                                                               current_xml_json_pair_id,
-                                                                  common.xml_tags.CO_SIM_XML_CO_SIM_PARAMS_PAIR_NAME,
-                                                                  common.xml_tags.CO_SIM_XML_CO_SIM_PARAMS_PAIR_NAME))
-                return common.enums.XmlManagerReturnCodes.XML_TAG_ERROR
+                                                                  xml_tags.CO_SIM_XML_CO_SIM_PARAMS_PAIR_NAME,
+                                                                  xml_tags.CO_SIM_XML_CO_SIM_PARAMS_PAIR_NAME))
+                return enums.XmlManagerReturnCodes.XML_TAG_ERROR
 
             # json value
             try:
-                json_value = current_xml_json_pair_dict[common.xml_tags.CO_SIM_XML_CO_SIM_PARAMS_PAIR_VALUE]
+                json_value = current_xml_json_pair_dict[xml_tags.CO_SIM_XML_CO_SIM_PARAMS_PAIR_VALUE]
             except KeyError:
                 self._logger.error('{},{} has no <{}>...</{}> section'.format(self._xml_filename,
                                                                               current_xml_json_pair_id,
-                                                                   common.xml_tags.CO_SIM_XML_CO_SIM_PARAMS_PAIR_VALUE,
-                                                                   common.xml_tags.CO_SIM_XML_CO_SIM_PARAMS_PAIR_VALUE))
-                return common.enums.XmlManagerReturnCodes.XML_TAG_ERROR
+                                                                   xml_tags.CO_SIM_XML_CO_SIM_PARAMS_PAIR_VALUE,
+                                                                   xml_tags.CO_SIM_XML_CO_SIM_PARAMS_PAIR_VALUE))
+                return enums.XmlManagerReturnCodes.XML_TAG_ERROR
 
             # data type to be used to set the
             try:
-                json_data_type = current_xml_json_pair_dict[common.xml_tags.CO_SIM_XML_CO_SIM_PARAMS_PAIR_DATA_TYPE]
+                json_data_type = current_xml_json_pair_dict[xml_tags.CO_SIM_XML_CO_SIM_PARAMS_PAIR_DATA_TYPE]
             except KeyError:
                 self._logger.error('{},{} has no <{}>...</{}> section'.format(self._xml_filename,
                                                                               current_xml_json_pair_id,
-                                                                   common.xml_tags.CO_SIM_XML_CO_SIM_PARAMS_PAIR_DATA_TYPE,
-                                                                   common.xml_tags.CO_SIM_XML_CO_SIM_PARAMS_PAIR_DATA_TYPE))
-                return common.enums.XmlManagerReturnCodes.XML_TAG_ERROR
+                                                                   xml_tags.CO_SIM_XML_CO_SIM_PARAMS_PAIR_DATA_TYPE,
+                                                                   xml_tags.CO_SIM_XML_CO_SIM_PARAMS_PAIR_DATA_TYPE))
+                return enums.XmlManagerReturnCodes.XML_TAG_ERROR
 
-            if json_data_type == common.constants.CO_SIM_FLOAT_PRECISION_1:
+            if json_data_type == constants.CO_SIM_FLOAT_PRECISION_1:
                 try:
                     json_value = float('{:.1f}'.format(float(json_value)))
                 except ValueError:
@@ -119,8 +122,8 @@ class ParametersXmlManager(common.XmlManager):
                                                                                                        current_xml_json_pair_id,
                                                                                                        json_name,
                                                                                                        json_value))
-                    return common.enums.XmlManagerReturnCodes.XML_VALUE_ERROR
-            elif json_data_type == common.constants.CO_SIM_INTEGER:
+                    return enums.XmlManagerReturnCodes.XML_VALUE_ERROR
+            elif json_data_type == constants.CO_SIM_INTEGER:
                 try:
                     json_value = int(json_value)
                 except ValueError:
@@ -128,22 +131,22 @@ class ParametersXmlManager(common.XmlManager):
                                                                                                        current_xml_json_pair_id,
                                                                                                        json_name,
                                                                                                        json_value))
-                    return common.enums.XmlManagerReturnCodes.XML_VALUE_ERROR
-            elif json_data_type == common.constants.CO_SIM_STRING:
+                    return enums.XmlManagerReturnCodes.XML_VALUE_ERROR
+            elif json_data_type == constants.CO_SIM_STRING:
                 pass # OK, the value will be taken as it is
             else:
                 self._logger.error('{}, for the pair {}, {} : {} unexpected data type'.format(self._xml_filename,
                                                                                                      current_xml_json_pair_id,
                                                                                                      json_name,
                                                                                                      json_value))
-                return common.enums.XmlManagerReturnCodes.XML_TAG_ERROR
+                return enums.XmlManagerReturnCodes.XML_TAG_ERROR
 
             json_pair_dict[json_name] = json_value
 
-        self.__co_simulation_parameters_for_json_dict[common.xml_tags.CO_SIM_XML_CO_SIM_PARAMS_JSON_FILE] = \
+        self.__co_simulation_parameters_for_json_dict[xml_tags.CO_SIM_XML_CO_SIM_PARAMS_JSON_FILE] = \
             {json_root_object: json_pair_dict}
 
-        return common.enums.XmlManagerReturnCodes.XML_OK
+        return enums.XmlManagerReturnCodes.XML_OK
 
     def build_particular_sections_dicts(self):
         """
