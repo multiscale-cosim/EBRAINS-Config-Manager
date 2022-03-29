@@ -18,6 +18,7 @@ from EBRAINS_ConfigManager.workflow_configuraitons_manager.xml_parsers import en
 from EBRAINS_ConfigManager.workflow_configuraitons_manager.xml_parsers import xml_tags
 from EBRAINS_ConfigManager.workflow_configuraitons_manager.xml_parsers import utils
 from EBRAINS_ConfigManager.workflow_configuraitons_manager.xml_parsers import constants
+from common.utils import directory_utils
 
 
 class Arranger(object):
@@ -25,27 +26,21 @@ class Arranger(object):
         Arranges the run time environment
     """
 
-    # general members
-    __configuration_manager = None
-    __variables_manager = None
-    __logger = None
-
-    def __init__(self, configuration_manager=None, logger=None, variables_manager=None, items_to_be_arranged_dict=None):
+    def __init__(self, log_settings, configurations_manager, variables_manager, items_to_be_arranged_dict):
         # getting objects referenced provided when the instance object is created
-        self.__configuration_manager = configuration_manager
-        self.__logger = logger
+        self.__log_settings = log_settings
+        self.__configurations_manager = configurations_manager
+        self.__logger = self.__configurations_manager.load_log_configurations(
+                                        name=__name__,
+                                        log_configurations=self.__log_settings)
         self.__variables_manager = variables_manager
         self.__items_to_be_arranged_dict = items_to_be_arranged_dict
 
-    def __dir_creation(self, dir_to_be_created=None):
+    def __dir_creation(self, dir_to_be_created):
 
         try:
-            # NOTE: It's OK if the directory already exists
-            os.makedirs(dir_to_be_created, exist_ok=True)
-            #
-            # _just_for_debugging_ print(dir_to_be_created)
-            #
-        except OSError:
+            directory_utils.safe_makedir(dir_to_be_created)
+        except Exception:
             self.__logger.error('{} making dir(s) went wrong'.format(dir_to_be_created))
             return enums.ArrangerReturnCodes.MKDIR_ERROR
 

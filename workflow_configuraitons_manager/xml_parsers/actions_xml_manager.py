@@ -37,9 +37,12 @@ class ActionsXmlManager(object):
     """
     __actions_popen_arguments_dict = {}
 
-    def __init__(self, configuration_manager=None, logger=None, variables_manager=None, action_plan=None):
-        self.__configuration_manager = configuration_manager
-        self.__logger = logger
+    def __init__(self, log_settings, configurations_manager, variables_manager, action_plan,):
+        self.__log_settings = log_settings
+        self.__configurations_manager = configurations_manager
+        self.__logger = self.__configurations_manager.load_log_configurations(
+                                        name=__name__,
+                                        log_configurations=self.__log_settings)
         self.__variables_manager = variables_manager
         self.__action_plan = action_plan
 
@@ -93,9 +96,10 @@ class ActionsXmlManager(object):
                                                                 ])
 
                 xml_action_manager = self._CoSimulationActionXmlManager(
-                    configuration_manager=self.__configuration_manager,
-                    logger=self.__logger,
-                    xml_filename=current_action_xml_path_filename)
+                    log_settings = self.__log_settings,
+                    configurations_manager=self.__configurations_manager,
+                    xml_filename=current_action_xml_path_filename,
+                    name='ActionXmlManager')
 
                 # split XML dictionary into dictionaries by XML section
                 # at the end of the action XML dissection process
