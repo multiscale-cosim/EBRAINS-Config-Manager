@@ -52,15 +52,12 @@ class DirectoriesManager(metaclass=MetaDirectoriesManager):
         self.__directories.update({DefaultDirectories.LOGS:
                                   self.__make_default_directory(
                                       DefaultDirectories.LOGS.value)})
-        self.__directories.update({DefaultDirectories.RESULTS:
-                                  self.__make_default_directory(
-                                      DefaultDirectories.RESULTS.value)})
-        self.__directories.update({DefaultDirectories.FIGURES:
-                                  self.__make_default_directory(
-                                      DefaultDirectories.FIGURES.value)})
         self.__directories.update({DefaultDirectories.MONITORING_DATA:
                                   self.__make_default_directory(
                                     DefaultDirectories.MONITORING_DATA.value)})
+        self.__directories.update({DefaultDirectories.SIMULATION_RESULTS:
+                                  self.__make_default_directory(
+                                      DefaultDirectories.SIMULATION_RESULTS.value)})
         return output_dir
 
     def get_directory(self, directory):

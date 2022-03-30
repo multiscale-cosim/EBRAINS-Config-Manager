@@ -11,7 +11,6 @@ class DefaultDirectories(enum.Enum):
     """ Enum class for default directories """
 
     OUTPUT = 'output'
-    RESULTS = 'results'
+    SIMULATION_RESULTS = 'simulation_results'
     LOGS = 'logs'
-    FIGURES = 'figures'
     MONITORING_DATA = 'monitoring_data'

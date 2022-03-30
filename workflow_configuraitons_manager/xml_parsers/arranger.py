@@ -46,8 +46,19 @@ class Arranger(object):
 
         return enums.ArrangerReturnCodes.OK
 
-    def arrange(self):
+    
+    def __check_and_create_dir(self, directory):
+        ''''checks whether the directory already exist before creating it.'''
+        if not os.path.isdir(directory):
+            self.__logger.debug(f'{directory} does not exist, going to create it')
+            return self.__dir_creation(dir_to_be_created=directory)
 
+    def arrange(self):
+        arrangement_choices = {
+            constants.CO_SIM_ARRANGEMENT_CHECK_BEFORE_CREATION: self.__check_and_create_dir,
+            constants.CO_SIM_ARRANGEMENT_DIR_CREATION:self.__dir_creation
+        }
+            
         for key, value in self.__items_to_be_arranged_dict.items():
             # key = Arrangement XML id, e.g. arr_01
             arrangement_duty = value[xml_tags.CO_SIM_XML_ARRANGEMENT_DUTY]
@@ -55,11 +66,10 @@ class Arranger(object):
             transformed_arrange_what = \
                 utils.transform_co_simulation_variables_into_values(variables_manager=self.__variables_manager,
                                                                            functional_variable_value=raw_arrange_what)
-
-            if arrangement_duty == constants.CO_SIM_ARRANGEMENT_DIR_CREATION:
-
-                if not self.__dir_creation(dir_to_be_created=transformed_arrange_what) == \
-                       enums.ArrangerReturnCodes.OK:
-                    return enums.ArrangerReturnCodes.MKDIR_ERROR
+            if arrangement_choices[arrangement_duty](transformed_arrange_what) ==\
+                 enums.ArrangerReturnCodes.MKDIR_ERROR:
+                 return enums.ArrangerReturnCodes.MKDIR_ERROR
+            else:
+                continue
 
         return enums.ArrangerReturnCodes.OK

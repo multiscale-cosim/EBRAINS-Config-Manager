@@ -73,7 +73,7 @@ class VariablesManager(object):
         try:
             self.__dict[variable_name][constants.CO_SIM_VARIABLE_VALUE] = variable_value
         except KeyError:
-            # TODO handle exception handling
+            # TODO handle exception here
             self.__logger.error('{} has not been declared in the variable manager yet'.format(variable_name))
             raise exceptions.CoSimVariableNotFound(co_sim_variable_name=variable_name)
 
