@@ -58,7 +58,8 @@ class DirectoriesManager(metaclass=MetaDirectoriesManager):
         self.__directories.update({DefaultDirectories.SIMULATION_RESULTS:
                                   self.__make_default_directory(
                                       DefaultDirectories.SIMULATION_RESULTS.value)})
-        return output_dir
+        # return output_dir
+        return self.__directories
 
     def get_directory(self, directory):
         """Returns the path for the specified directory.
