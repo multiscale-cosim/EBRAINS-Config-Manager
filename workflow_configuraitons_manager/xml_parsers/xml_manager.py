@@ -26,29 +26,17 @@ class XmlManager(object):
         Template for XML managers
     """
 
-    # general members
-    _configuration_manager = None
-    _logger = None
-    _xml_filename = None
-
-    # expected members from sub-classes
-    _component_xml_tag = ''  # e.g. co_simulation_action_plan, co_simulation_parameters
-    _xml_main_tags = set()
-
-    # dictionaries
-    _main_xml_sections_dicts_dict = {}
-    _parameters_dict = {}
-    _variables_dict = {}
-    _whole_xml_dict = {}
-
-    def __init__(self, configuration_manager=None, logger=None, xml_filename=None):
+    def __init__(self, log_settings, configurations_manager, xml_filename, name):
         # getting objects referenced provided when the instance object is created
-        self._configuration_manager = configuration_manager
-        self._logger = logger
+        self._log_settings = log_settings
+        self._configurations_manager = configurations_manager
+        self._logger = self._configurations_manager.load_log_configurations(
+                                        name=name,
+                                        log_configurations=self._log_settings)
         self._xml_filename = xml_filename
 
         # attributes to be set on sub-classes
-        self._component_xml_tag = ''
+        self._component_xml_tag = ''  # e.g. co_simulation_action_plan, co_simulation_parameters
         self._xml_main_tags = set()
 
         # dictionaries
@@ -80,7 +68,7 @@ class XmlManager(object):
             return enums.XmlManagerReturnCodes.XML_FILE_ACCESS_ERROR
 
         try:
-            self._whole_xml_dict = self._configuration_manager.get_configuration_settings(
+            self._whole_xml_dict = self._configurations_manager.get_configuration_settings(
                 configuration_file=self._xml_filename,
                 component=self._component_xml_tag)
         except xml.etree.ElementTree.ParseError:

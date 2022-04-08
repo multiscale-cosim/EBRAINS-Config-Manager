@@ -26,8 +26,12 @@ class VariablesManager(object):
     """
     __logger = None
 
-    def __init__(self, logger=None):
-        self.__logger = logger
+    def __init__(self, log_settings, configurations_manager):
+        self.__log_settings = log_settings
+        self.__configurations_manager = configurations_manager
+        self.__logger = self.__configurations_manager.load_log_configurations(
+                                        name=__name__,
+                                        log_configurations=self.__log_settings)
 
         self.__dict = {
             # Actions XML files location
@@ -52,15 +56,14 @@ class VariablesManager(object):
                 constants.CO_SIM_VARIABLE_VALUE: None},
         }
 
-    def get_value(self, variable_name=None):
+    def get_value(self, variable_name):
         """
-
         :param variable_name: The environment variable name which the value is being gotten (requested)
         :return: The value of the passed variable name
         """
         return self.__dict[variable_name][constants.CO_SIM_VARIABLE_VALUE]
 
-    def set_value(self, variable_name=None, variable_value=None):
+    def set_value(self, variable_name, variable_value):
         """
 
         :param variable_value:
@@ -70,13 +73,13 @@ class VariablesManager(object):
         try:
             self.__dict[variable_name][constants.CO_SIM_VARIABLE_VALUE] = variable_value
         except KeyError:
+            # TODO handle exception here
             self.__logger.error('{} has not been declared in the variable manager yet'.format(variable_name))
             raise exceptions.CoSimVariableNotFound(co_sim_variable_name=variable_name)
-            return None
 
         return self.__dict[variable_name]
 
-    def set_co_sim_variable_values_from_variables_dict(self, variables_dictionary_source=None):
+    def set_co_sim_variable_values_from_variables_dict(self, variables_dictionary_source):
         """
 
         :param variables_dictionary_source: Dictionary containing Co-Simulation Variables (CO_SIM_*)
@@ -92,7 +95,7 @@ class VariablesManager(object):
 
         return enums.VariablesReturnCodes.VARIABLE_OK
 
-    def create_variables_from_parameters_dict(self, input_dictionary=None):
+    def create_variables_from_parameters_dict(self, input_dictionary):
         """
             Transforms the referenced variables names into its values based on CO_SIM_* variables.
 
