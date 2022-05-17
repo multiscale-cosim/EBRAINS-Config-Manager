@@ -14,7 +14,6 @@
 import os
 import re
 
-# Co-Simulator imports
 from EBRAINS_ConfigManager.workflow_configuraitons_manager.xml_parsers import constants
 from EBRAINS_ConfigManager.workflow_configuraitons_manager.xml_parsers import exceptions
 
@@ -35,6 +34,9 @@ def transform_co_simulation_variables_into_values(variables_manager=None, functi
     # finding co_simulation variables
     split_variable_list = re.split(constants.CO_SIM_REGEX_CO_SIM_VARIABLE, functional_variable_value)
 
+    # __debug__
+    # print(f'__debug__,{sys._getframe(1).f_code.co_name},split_variable_list={split_variable_list}')
+    # __debug__
     next_piece_is_an_co_simulation_variable_name = False
     next_piece_is_the_closing_curly_brace = False
     for current_piece in split_variable_list:
@@ -44,14 +46,20 @@ def transform_co_simulation_variables_into_values(variables_manager=None, functi
 
         elif next_piece_is_an_co_simulation_variable_name:
             next_piece_is_an_co_simulation_variable_name = False
-            next_piece_is_the_closing_curly_brace = True  # after processing the co_simulation variable a '}' is expected
+            next_piece_is_the_closing_curly_brace = True  # after processing the co_simulation variable a '}'
+            # is expected
+
             try:
                 # getting the co_simulation variable value from the variables manager
-                transformed_variable_value += variables_manager.get_value('CO_SIM_'+current_piece)
+                transformed_variable_value += variables_manager.get_value('CO_SIM_' + current_piece)
+                # __debug__
+                # print(f'__debug__,{sys._getframe(1).f_code.co_name},
+                # transformed_variable_value={transformed_variable_value}')
+                # __debug__
             except KeyError:
                 transformed_variable_value = ''
                 raise exceptions.CoSimVariableNotFound(current_piece)
-                break
+                #  break
         elif next_piece_is_the_closing_curly_brace:
             next_piece_is_the_closing_curly_brace = False
             # bypassing the closing curly brace char
@@ -95,7 +103,7 @@ def transform_environment_variables_into_values(functional_variable_value=None):
             except KeyError:
                 transformed_variable_value = ''
                 raise exceptions.EnvironmentVariableNotSet(current_piece)
-                break
+                #  break
         elif next_piece_is_the_closing_curly_brace:
             next_piece_is_the_closing_curly_brace = False
             # bypassing the closing curly brace char

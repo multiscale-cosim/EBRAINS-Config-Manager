@@ -25,36 +25,23 @@ class VariablesManager(object):
         Manages the variables related to the run-time environment
     """
     __logger = None
+    __dict = {}
 
     def __init__(self, log_settings, configurations_manager):
         self.__log_settings = log_settings
         self.__configurations_manager = configurations_manager
         self.__logger = self.__configurations_manager.load_log_configurations(
-                                        name=__name__,
-                                        log_configurations=self.__log_settings)
+            name=__name__,
+            log_configurations=self.__log_settings)
 
-        self.__dict = {
-            # Actions XML files location
-            variables.CO_SIM_ACTIONS_DIR: {
-                constants.CO_SIM_VARIABLE_DESCRIPTION: 'Path to actions XML files',
-                constants.CO_SIM_VARIABLE_VALUE: None},
-            # Empty, TO BE USED AS A FAKE VALUE
-            variables.CO_SIM_EMPTY: {
-                constants.CO_SIM_VARIABLE_DESCRIPTION: 'empty string',
-                constants.CO_SIM_VARIABLE_VALUE: ''},
-            # Execution Environment <Local|Cluster>
-            variables.CO_SIM_EXECUTION_ENVIRONMENT: {
-                constants.CO_SIM_VARIABLE_DESCRIPTION: 'Co-Simulator Execution Environment',
-                constants.CO_SIM_VARIABLE_VALUE: None},
-            # Results Output Directory
-            variables.CO_SIM_RESULTS_DIR: {
-                constants.CO_SIM_VARIABLE_DESCRIPTION: 'Results files directory location',
-                constants.CO_SIM_VARIABLE_VALUE: None},
-            # Routines Directory Path
-            variables.CO_SIM_ROUTINES_DIR: {
-                constants.CO_SIM_VARIABLE_DESCRIPTION: 'Co-Simulation Routines directory location',
-                constants.CO_SIM_VARIABLE_VALUE: None},
-        }
+        for curr_co_sim_variable in variables.CO_SIM_VARIABLES_TUPLE:
+            self.__dict.update({curr_co_sim_variable: {constants.CO_SIM_VARIABLE_DESCRIPTION: '',
+                                                       constants.CO_SIM_VARIABLE_VALUE: None}})
+
+        # CO_SIM_EMPTY is used as a "None" value for CO_SIM_<variable>,
+        # hence an EMPTY string is assigned as a value to it
+        self.__dict.update({'CO_SIM_EMPTY': {constants.CO_SIM_VARIABLE_DESCRIPTION: '',
+                                             constants.CO_SIM_VARIABLE_VALUE: ''}})
 
     def get_value(self, variable_name):
         """
@@ -93,6 +80,14 @@ class VariablesManager(object):
                 self.__logger.error('{} is not a defined Co-Simulator variable'.format(key))
                 return enums.VariablesReturnCodes.VARIABLE_NOT_OK
 
+            # In this point, key is a recognized (defined) CO_SIM_ variable
+            # hence, the value to assigned to it could be another CO_SIM variable
+            # IMPORTANT: The order how the CO_SIM variables are referenced is relevant
+            #            for the proper processing (conversion into values).
+            run_time_value = utils.transform_co_simulation_variables_into_values(variables_manager=self,
+                                                                                 functional_variable_value=value)
+            self.__dict[key][constants.CO_SIM_VARIABLE_VALUE] = run_time_value
+
         return enums.VariablesReturnCodes.VARIABLE_OK
 
     def create_variables_from_parameters_dict(self, input_dictionary):
@@ -101,12 +96,12 @@ class VariablesManager(object):
 
             CO_SIM_* variables are those referencing a value in the same XML configuration file.
                 e.g.
-                    CO_SIM_RUNTIME_RESULTS_DIR -> represents the output path where the results files
+                    CO_SIM_RUNTIME_RESULTS_PATH -> represents the output path where the results files
                                                     will be written/read.
                     and could be referenced as follows:
                     <var_186>
                         <var_name>CO_SIM_VISUALIZATION_FILES_OUTPUT_PATH</var_name>
-                        <var_value>CO_SIM_RUNTIME_RESULTS_DIR/visualizer</var_value>
+                        <var_value>CO_SIM_RUNTIME_RESULTS_PATH/visualizer</var_value>
                     </var_186>
 
             Environment variables are those defined on the system where the Co-Simulation process is being run.
@@ -114,7 +109,7 @@ class VariablesManager(object):
                         ${CO_SIM_TVB_NEST_PATH} -> represents the path where the TVB_NEST repository is located.
                     and could be referenced as follows:
                     <var_194>
-                        <var_name>CO_SIM_XML_ACTIONS_DIR</var_name>
+                        <var_name>CO_SIM_XML_ACTIONS_PATH</var_name>
                         <var_value>${CO_SIM_TVB_NEST_PATH}/co_simulator/actions</var_value>
                     </var_194>
 
@@ -132,7 +127,7 @@ class VariablesManager(object):
             try:
                 runtime_variable_value = \
                     utils.transform_co_simulation_variables_into_values(variables_manager=self,
-                                                                               functional_variable_value=value)
+                                                                        functional_variable_value=value)
             except exceptions.CoSimVariableNotFound as CoSimVariableNotFound:
                 self.__logger.error(CoSimVariableNotFound)
                 # return enums.XmlManagerReturnCodes.XML_CO_SIM_VARIABLE_ERROR
@@ -143,7 +138,7 @@ class VariablesManager(object):
                                 constants.CO_SIM_VARIABLE_VALUE: runtime_variable_value}
         return enums.ParametersReturnCodes.PARAMETER_OK
 
-    def create_co_sim_run_time_variables(self, action_plan_variables_dict=None, action_plan_parameters_dict=None):
+    def create_co_sim_run_time_variables(self):
         """
             Sets RUN TIME Co-Simulation variables based on the content of the variables
             and parameters set on the Action Plan XML file

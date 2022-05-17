@@ -12,17 +12,44 @@
 #
 # ------------------------------------------------------------------------------
 
-# Environment variable names
-CO_SIM_ACTIONS_DIR = 'CO_SIM_ACTIONS_DIR'   # Variable name referring to the Actions XML configuration files
+#
+# IMPORTANT: DO NOT FORGET TO ADD THE CO_SIM_<variable> INTO THE
+#            CO_SIM_VARIABLES_TUPLE DEFINED AT THE END OF THIS FILE
+#            ^^^^^^^^^^^^^^^^^^^^^^
+
+# Co-Simulation Framework's  Environment variable
+CO_SIM_ACTIONS_PATH = 'CO_SIM_ACTIONS_PATH'  # Variable name referring to the Actions XML configuration files
+
 CO_SIM_EMPTY = 'CO_SIM_EMPTY'  # empty string shall be the assigned value
 CO_SIM_EXECUTION_ENVIRONMENT = 'CO_SIM_EXECUTION_ENVIRONMENT'
-CO_SIM_ROUTINES_DIR = 'CO_SIM_ROUTINES_DIR'
 
 CO_SIM_LAUNCHER = 'CO_SIM_LAUNCHER'  # Contains srun or mpirun according to the environment
+CO_SIM_MODULES_ROOT_PATH = 'CO_SIM_MODULES_ROOT_PATH'  # mutilscale-cosim/EBRAINS-<app-domain> repos location
 
 
+# The RESULTS path must be assigned on run-time gathered by means of the configuration manager
+CO_SIM_RESULTS_PATH = 'CO_SIM_RESULTS_PATH'
 
-# The path must be assigned on run-time gathered
-# by means of the configuration manager
-CO_SIM_RESULTS_DIR = 'CO_SIM_RESULTS_DIR'
+CO_SIM_ROOT_PATH = 'CO_SIM_ROOT_PATH'  # base path to be used as reference for other location
+CO_SIM_ROUTINES_PATH = 'CO_SIM_ROUTINES_PATH'  # to reference location of ROUTINES source code file
 
+CO_SIM_PARAMETERS_PATH = 'CO_SIM_PARAMETERS_PATH'
+
+CO_SIM_USE_CASE_ROOT_PATH = 'CO_SIM_USE_CASE_ROOT_PATH'
+
+#
+# Tuple used by the Variables Manager in order to create a dictionary for
+# further processing
+#
+CO_SIM_VARIABLES_TUPLE = (
+    CO_SIM_ACTIONS_PATH,
+    CO_SIM_EMPTY,
+    CO_SIM_EXECUTION_ENVIRONMENT,
+    CO_SIM_LAUNCHER,
+    CO_SIM_MODULES_ROOT_PATH,
+    CO_SIM_PARAMETERS_PATH,
+    CO_SIM_RESULTS_PATH,
+    CO_SIM_ROOT_PATH,
+    CO_SIM_ROUTINES_PATH,
+    CO_SIM_USE_CASE_ROOT_PATH,
+)
