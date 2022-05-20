@@ -17,20 +17,35 @@ from xml.etree.ElementTree import iterparse
 
 # Co-Sim's imports
 
+class ConvertXmlNodeTextToDatatype(object):
+    """
+        XML's Node Data Conversion
+    """
+    def __init__(self):
+        self.__integer_labels_list = ['INT', 'INTEGER']
+        self.__string_labels_list = ['STR', 'STRING']
 
-def node_text_to_datatype(node=None):
-    l_node_datatype = node.attrib.get('datatype')
-    if l_node_datatype:
-        l_node_datatype = l_node_datatype.upper()
+    def node_text_to_datatype(self, node=None):
+        """
+            Converts the node's text (data) into the specified datatype on the XML's node tag
 
-        if 'INTEGER' == l_node_datatype or 'INT' == l_node_datatype:
-            return int(node.text)
-        elif 'FLOAT' == l_node_datatype:
-            return float(node.text)
-        elif 'STRING' == l_node_datatype:
-            return node.text  # assigned as it is on the XML file
-        else:
-            return None
+        :param node:
+            XML's node containing data to be transformed
+        :return:
+            The data converted as Python's data type
+        """
+        l_node_datatype = node.attrib.get('datatype')
+        if l_node_datatype:
+            l_node_datatype = l_node_datatype.upper()
+
+            if l_node_datatype in self.__integer_labels_list:
+                return int(node.text)
+            elif 'FLOAT' == l_node_datatype:
+                return float(node.text)
+            elif l_node_datatype in self.__string_labels_list:
+                return node.text  # assigned as it is on the XML file
+            else:
+                return None
 
 
 class Xml2ClassParser:
@@ -38,7 +53,11 @@ class Xml2ClassParser:
         XML Parser to create a class based on the passed XML PATH+FILENAME
     """
 
+
+
     def __init__(self, input_xml_path_filename=None, logger=None):
+        self.__dictionary_labels_list = ['DICT', 'DICTIONARY']
+        self.__convert_xml_node_text_to_datatype = ConvertXmlNodeTextToDatatype()
         self.__params_dict = None
         self.__input_xml_path_filename = input_xml_path_filename
         self.__logger = logger
@@ -66,15 +85,16 @@ class Xml2ClassParser:
 
                 is_model = node.attrib.get('model')
                 if is_model:
-                    self.__logger.debug(f'start,MODEL found: model={is_model}')
                     processing_model = True
                     # model_element_id = id(node)
                     model_dict = {'model': is_model}  # NOTE: is_model contains the name of the model per se
                     continue
 
                 has_datatype = node.attrib.get('datatype')
-                if has_datatype:
-                    if 'DICTIONARY' == has_datatype.upper():
+                if not has_datatype:
+                    pass
+                else:
+                    if has_datatype.upper() in self.__dictionary_labels_list:
                         processing_dictionary = True
                         dictionary_dict = {}
                     processing_element = True
@@ -90,7 +110,8 @@ class Xml2ClassParser:
 
                 has_datatype = node.attrib.get('datatype')
                 if has_datatype:
-                    if 'DICTIONARY' == has_datatype.upper():
+                    if has_datatype.upper() in self.__dictionary_labels_list:
+                        processing_dictionary = False
                         if processing_model:
                             model_dict[node.tag] = dictionary_dict
                             continue
@@ -101,14 +122,14 @@ class Xml2ClassParser:
                 if processing_element:
                     processing_element = False
                     if processing_dictionary:
-                        dictionary_dict[node.tag] = node_text_to_datatype(node=node)
+                        dictionary_dict[node.tag] = self.__convert_xml_node_text_to_datatype.node_text_to_datatype(node=node)
                         continue
 
                     if processing_model:
-                        model_dict[node.tag] = node_text_to_datatype(node=node)
+                        model_dict[node.tag] = self.__convert_xml_node_text_to_datatype.node_text_to_datatype(node=node)
                         continue
 
-                    self.__params_dict[node.tag] = node_text_to_datatype(node=node)
+                    self.__params_dict[node.tag] = self.__convert_xml_node_text_to_datatype.node_text_to_datatype(node=node)
 
     # def __parse_xml_and_create_attributes(self):
     #     """
