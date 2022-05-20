@@ -67,7 +67,7 @@ class ParametersXmlManager(XmlManager):
                                                                        xml_tags.CO_SIM_XML_CO_SIM_PARAMS_ROOT_OBJECT))
             return enums.XmlManagerReturnCodes.XML_TAG_ERROR
 
-        # building the the dictionary to be dumped into a file by using JSON format
+        # building the dictionary to be dumped into a file by using JSON format
         xml_json_pairs_dict = {}
 
         try:
@@ -160,7 +160,7 @@ class ParametersXmlManager(XmlManager):
             which could return the following results codes:
 
             XML_TAG_ERROR   -> The Co-Simulation XML file does not contain the expected TAGS
-                                related to the the action plan. e.g. <action_plan></action_plan>
+                                related to the action plan. e.g. <action_plan></action_plan>
             XML_VALUE_ERROR -> The Co-Simulation XML file does not contain the expected VALUES
                                 related to the action definition itself. e.g. CO_SIM_EVENT
             XML_OK:         -> The __action_plan_dict attributed has been filled properly

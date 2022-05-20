@@ -31,8 +31,8 @@ class XmlManager(object):
         self._log_settings = log_settings
         self._configurations_manager = configurations_manager
         self._logger = self._configurations_manager.load_log_configurations(
-                                        name=name,
-                                        log_configurations=self._log_settings)
+            name=name,
+            log_configurations=self._log_settings)
         self._xml_filename = xml_filename
 
         # attributes to be set on sub-classes
@@ -173,7 +173,7 @@ class XmlManager(object):
         # meaning that at least one parameter element is expected even though this is a mock one
 
         for key, value in xml_parameters_dict.items():
-            # key   -> The XML tag refering to the parameter name, e.g. par_000
+            # key   -> The XML tag referring to the parameter name, e.g. par_000
             # value -> The dictionary defining the parameter per se, e.g.
             #           {'par_name': 'CO_SIM_DELAY', 'par_value': 100 }
 
@@ -205,15 +205,14 @@ class XmlManager(object):
             of sub-classes to gather additional section from the Co-Simulation XML file
 
         :return:
-            XML_OK - Just to by pass the checking when the method is not defined on the sub-class
+            XML_OK - Just to bypass the checking when the method is not defined on the subclass
         """
 
         return enums.XmlManagerReturnCodes.XML_OK
 
     def __transform_environment_variables_into_values(self, input_dictionary=None):
         """
-            Transforms the referenced variables names into its values based
-            on CO_SIM_* variables or environment variables.
+            Transforms the referenced OS Environment Variables  into its run-time values
 
             Environment variables are those defined on the system where the Co-Simulation process is being run.
                 e.g.
@@ -267,7 +266,7 @@ class XmlManager(object):
             XML_ENVIRONMENT_VARIABLE_ERROR
             XML_OK
         """
-        # Setting up the XML tags particularly used by XML Manager the sub-class
+        # Setting up the XML tags particularly used by XML Manager the subclass
         self.initialize_xml_elements()
 
         # Step 1 - Loading XML into a _whole_xml_dict attribute
@@ -284,7 +283,7 @@ class XmlManager(object):
         del self._whole_xml_dict
 
         # Step 3 - Variables
-        # Step 3.1  - Creating the variables dict by gathering the elements defined in the XML file variables section
+        # Step 3.1  - Creating the variables' dict by gathering the elements defined in the XML file variables section
         if not self._build_variables_dict_from_xml_main_dicts() == enums.XmlManagerReturnCodes.XML_OK:
             return enums.XmlManagerReturnCodes.XML_VALUE_ERROR
 
@@ -294,13 +293,13 @@ class XmlManager(object):
             return enums.XmlManagerReturnCodes.XML_ENVIRONMENT_VARIABLE_ERROR
 
         # Step 4 - Parameters
-        # Step 4.1  -   Creating the parameters dict by getting the elements
+        # Step 4.1  -   Creating the parameters' dict by getting the elements
         #               defined in the XML file parameters section
         if not self._build_parameters_dict_from_xml_main_dicts() == enums.XmlManagerReturnCodes.XML_OK:
             return enums.XmlManagerReturnCodes.XML_VALUE_ERROR
 
         # Step 99 - Calling the ending method for managing the particular XML sections,
-        #           if it is defined in the sub-class, otherwise the abstract method will be called.
+        #           if it is defined in the subclass, otherwise the abstract method will be called.
         if not self.build_particular_sections_dicts() == enums.XmlManagerReturnCodes.XML_OK:
             return enums.XmlManagerReturnCodes.XML_VALUE_ERROR
 
@@ -327,5 +326,3 @@ class XmlManager(object):
 
         """
         return self._variables_dict
-
-
