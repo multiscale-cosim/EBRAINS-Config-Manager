@@ -60,6 +60,10 @@ class Xml2ClassParser:
         XML Parser to create a class based on the passed XML PATH+FILENAME
     """
 
+    #
+    # TO BE DONE: Support for Python's list, tuples among others.
+    #
+
     def __init__(self, input_xml_path_filename=None, logger=None):
         self.__dictionary_labels_list = ['DICT', 'DICTIONARY']
         self.__array_labels_list = ['ARR', 'ARRAY']  # numpy.array
@@ -82,7 +86,7 @@ class Xml2ClassParser:
 
     def __parse_xml_and_create_dict(self):
         """
-            Fills up the attributes dictionary by parsing the parameters XML file
+            Fills up the attributes' dictionary by parsing the parameters XML file
         :return:
         """
         self.__params_dict = {}
