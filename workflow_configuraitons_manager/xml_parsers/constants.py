@@ -128,11 +128,13 @@ CO_SIM_ACTION_EVENTS_TUPLE:
         </action_NNN>
     </action_plan>
 Meanings:
-    CO_SIM_WAIT_FOR_SEQUENTIAL_ACTIONS: The launcher shall wait for the ending of all the actions launched synchronously. 
+    CO_SIM_WAIT_FOR_SEQUENTIAL_ACTIONS: The launcher shall wait
+                                            for the ending of all the actions launched synchronously. 
                                         The launcher will not perform any further processing until
                                         the synchronous action(s) defined previously to the event is/are accomplished.
                                          
-    CO_SIM_WAIT_FOR_CONCURRENT_ACTIONS: The launcher shall wait for the ending of all the actions launched asynchronously.
+    CO_SIM_WAIT_FOR_CONCURRENT_ACTIONS: The launcher shall wait for 
+                                            the ending of all the actions launched asynchronously.
                                         The launcher will not perform any further processing until
                                         the asynchronous action(s) defined previously to the event is/are accomplished.
                                         As a rule of thumb, an action plan must contains as a last action this kind
@@ -154,7 +156,7 @@ CO_SIM_REGEX_ENVIRONMENT_VARIABLE:
 CO_SIM_REGEX_ENVIRONMENT_VARIABLE: str = r'(\$\{|\})'
 CO_SIM_REGEX_CO_SIM_VARIABLE: str = r'(\{CO_SIM_|\})'
 
-# Co-Simulation Framework's  Parameters Variables
+# Co-Simulation Framework's Parameters Variables
 CO_SIM_FUNCTIONAL_PARAMETERS = 'CO_SIM_FUNCTIONAL_PARAMETERS'
 CO_SIM_SCIENTIFIC_PARAMETERS = 'CO_SIM_SCIENTIFIC_PARAMETERS'
 CO_SIM_PARAMETERS_TUPLE = (
