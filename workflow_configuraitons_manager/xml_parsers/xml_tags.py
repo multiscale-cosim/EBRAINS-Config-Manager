@@ -73,6 +73,5 @@ CO_SIM_XML_CO_SIM_PARAMS_PAIR_VALUE = 'value'
 CO_SIM_XML_CO_SIM_PARAMS_PAIR_DATA_TYPE = 'data_type'
 
 
-
-
-
+# XML Tags used to parse Co-Simulation Communication Settings XML files
+CO_SIM_XML_CO_SIM_COMM_SETTINGS_ROOT_TAG = 'co_simulation_communication_settings'
