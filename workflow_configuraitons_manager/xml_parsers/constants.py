@@ -83,6 +83,19 @@ CO_SIM_ACTION_TYPES_TUPLE = (
 )
 
 """
+CO_SIM_ACTION_GOALS_TUPLE:
+    Represents the different goals that an action is aimed at
+"""
+CO_SIM_DATA_TRANSFORMATION = 'CO_SIM_DATA_TRANSFORMATION'
+CO_SIM_SIMULATION = 'CO_SIM_SIMULATION'
+CO_SIM_UNSPECIFIED_GOAL = 'CO_SIM_UNSPECIFIED_GOAL'
+CO_SIM_ACTION_GOALS_TUPLE = (
+    CO_SIM_DATA_TRANSFORMATION,
+    CO_SIM_SIMULATION,
+    CO_SIM_UNSPECIFIED_GOAL,
+)
+
+"""
 CO_SIM_ACTION_LAUNCH_METHODS_TUPLE:
     Represents the different methods how Co-Simulation actions
     could be launched
