@@ -90,6 +90,12 @@ class PlanXmlManager(XmlManager):
         # on a sorted way, just following the correlative order of the name
         # of each action. <action_NNN> where NNN = indicates a correlative number
         for key, value in sorted(xml_action_plan_dict.items()):
+            #   key: got the action ID, i.e. action_NNN
+            # value: got the dictionary which characterize the action_NNN
+
+            #            ###########################
+            # processing <action_type></action_type>
+            #            ###########################
             # getting the action type, i.e. CO_SIM_ACTION_SCRIPT, CO_SIM_EVENT
             try:
                 action_type = value[xml_tags.CO_SIM_XML_PLAN_ACTION_TYPE]
@@ -102,10 +108,44 @@ class PlanXmlManager(XmlManager):
             if action_type not in constants.CO_SIM_ACTION_TYPES_TUPLE:
                 self._logger.error(
                     '{} has <{}><{}> a wrong value {}'.format(self._xml_filename, key,
-                                                               xml_tags.CO_SIM_XML_PLAN_ACTION_TYPE,
-                                                               action_type))
+                                                              xml_tags.CO_SIM_XML_PLAN_ACTION_TYPE,
+                                                              action_type))
                 return enums.XmlManagerReturnCodes.XML_VALUE_ERROR
 
+            #            ###########################
+            # processing <action_goal></action_goal>
+            #            ###########################
+            try:
+                action_goal = value[xml_tags.CO_SIM_XML_PLAN_ACTION_GOAL]
+            except KeyError:
+                # there is no <action_goal> tag, hence a default value is assigned
+                action_goal = constants.CO_SIM_UNSPECIFIED_GOAL
+                value[xml_tags.CO_SIM_XML_PLAN_ACTION_GOAL] = action_goal
+
+            if action_goal not in constants.CO_SIM_ACTION_GOALS_TUPLE:
+                self._logger.error(
+                    '{} has <{}><{}> a wrong value {}'.format(self._xml_filename, key,
+                                                              xml_tags.CO_SIM_XML_PLAN_ACTION_GOAL,
+                                                              action_goal))
+                return enums.XmlManagerReturnCodes.XML_VALUE_ERROR
+
+            # TO BE DONE: ############################
+            # Processing <action_realm></action_realm>
+            #            #############################
+            
+            #            #############################
+            # processing <action_label></action_label>
+            #            #############################
+            # Since the action label is another way to identify an action
+            # there is no specific validation procedure
+            try:
+                action_label = value[xml_tags.CO_SIM_XML_PLAN_ACTION_LABEL]
+            except KeyError:
+                # there is no <action_label> tag, hence a default value is assigned
+                action_label = key  # assigning the action_NNN as label
+                value[xml_tags.CO_SIM_XML_PLAN_ACTION_LABEL] = action_label
+
+            # 
             # TO BE DONE: Checking the content of <action_launch_method> and <action_event> against *_TUPLE
 
             # Filling up the action plan dictionary
@@ -130,7 +170,7 @@ class PlanXmlManager(XmlManager):
             which could return the following results codes:
 
             XML_TAG_ERROR   -> The Co-Simulation XML file does not contain the expected TAGS
-                                related to the the action plan. e.g. <action_plan></action_plan>
+                                related to the action plan. e.g. <action_plan></action_plan>
             XML_VALUE_ERROR -> The Co-Simulation XML file does not contain the expected VALUES
                                 related to the action definition itself. e.g. CO_SIM_EVENT
             XML_OK:         -> The __action_plan_dict attributed has been filled properly
@@ -165,7 +205,3 @@ class PlanXmlManager(XmlManager):
                 __action_plan_dict attribute
         """
         return self.__action_plan_dict
-
-
-
-
