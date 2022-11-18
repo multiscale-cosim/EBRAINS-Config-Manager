@@ -13,11 +13,11 @@
 # ------------------------------------------------------------------------------
 
 # Co-Simulator Imports
-from EBRAINS_ConfigManager.workflow_configuraitons_manager.xml_parsers import enums
-from EBRAINS_ConfigManager.workflow_configuraitons_manager.xml_parsers import variables
-from EBRAINS_ConfigManager.workflow_configuraitons_manager.xml_parsers import constants
-from EBRAINS_ConfigManager.workflow_configuraitons_manager.xml_parsers import exceptions
-from EBRAINS_ConfigManager.workflow_configuraitons_manager.xml_parsers import utils
+from EBRAINS_ConfigManager.workflow_configurations_manager.xml_parsers import enums
+from EBRAINS_ConfigManager.workflow_configurations_manager.xml_parsers import variables
+from EBRAINS_ConfigManager.workflow_configurations_manager.xml_parsers import constants
+from EBRAINS_ConfigManager.workflow_configurations_manager.xml_parsers import exceptions
+from EBRAINS_ConfigManager.workflow_configurations_manager.xml_parsers import utils
 
 
 class VariablesManager(object):

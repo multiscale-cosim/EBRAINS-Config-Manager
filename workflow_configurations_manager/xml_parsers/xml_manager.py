@@ -15,10 +15,10 @@ import os
 import xml
 
 # Co-Simulator imports
-from EBRAINS_ConfigManager.workflow_configuraitons_manager.xml_parsers import enums
-from EBRAINS_ConfigManager.workflow_configuraitons_manager.xml_parsers import utils
-from EBRAINS_ConfigManager.workflow_configuraitons_manager.xml_parsers import xml_tags
-from EBRAINS_ConfigManager.workflow_configuraitons_manager.xml_parsers import exceptions
+from EBRAINS_ConfigManager.workflow_configurations_manager.xml_parsers import enums
+from EBRAINS_ConfigManager.workflow_configurations_manager.xml_parsers import utils
+from EBRAINS_ConfigManager.workflow_configurations_manager.xml_parsers import xml_tags
+from EBRAINS_ConfigManager.workflow_configurations_manager.xml_parsers import exceptions
 
 
 class XmlManager(object):

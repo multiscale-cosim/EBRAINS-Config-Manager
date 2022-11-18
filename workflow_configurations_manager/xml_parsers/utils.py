@@ -14,8 +14,8 @@
 import os
 import re
 
-from EBRAINS_ConfigManager.workflow_configuraitons_manager.xml_parsers import constants
-from EBRAINS_ConfigManager.workflow_configuraitons_manager.xml_parsers import exceptions
+from EBRAINS_ConfigManager.workflow_configurations_manager.xml_parsers import constants
+from EBRAINS_ConfigManager.workflow_configurations_manager.xml_parsers import exceptions
 
 
 def transform_co_simulation_variables_into_values(variables_manager=None, functional_variable_value=None):

@@ -14,14 +14,14 @@
 import os
 
 # Co-Simulator's imports
-from EBRAINS_ConfigManager.workflow_configuraitons_manager.xml_parsers import constants
-from EBRAINS_ConfigManager.workflow_configuraitons_manager.xml_parsers import exceptions
-from EBRAINS_ConfigManager.workflow_configuraitons_manager.xml_parsers import enums
-from EBRAINS_ConfigManager.workflow_configuraitons_manager.xml_parsers import utils
-from EBRAINS_ConfigManager.workflow_configuraitons_manager.xml_parsers import variables
-from EBRAINS_ConfigManager.workflow_configuraitons_manager.xml_parsers import xml_tags
+from EBRAINS_ConfigManager.workflow_configurations_manager.xml_parsers import constants
+from EBRAINS_ConfigManager.workflow_configurations_manager.xml_parsers import exceptions
+from EBRAINS_ConfigManager.workflow_configurations_manager.xml_parsers import enums
+from EBRAINS_ConfigManager.workflow_configurations_manager.xml_parsers import utils
+from EBRAINS_ConfigManager.workflow_configurations_manager.xml_parsers import variables
+from EBRAINS_ConfigManager.workflow_configurations_manager.xml_parsers import xml_tags
 
-from EBRAINS_ConfigManager.workflow_configuraitons_manager.xml_parsers.xml_manager import XmlManager
+from EBRAINS_ConfigManager.workflow_configurations_manager.xml_parsers.xml_manager import XmlManager
 
 
 class ActionsXmlManager(object):
