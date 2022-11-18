@@ -84,9 +84,11 @@ class ActionsXmlManager(object):
                     '{} is being referenced, nevertheless the variable has not been set yet'.format(item))
                 return enums.XmlManagerReturnCodes.XML_CO_SIM_VARIABLE_ERROR
 
-        # Removing those items with empty value, i.e. equal to ''
-        if self.__variables_manager.get_value(variable_name=variables.CO_SIM_EMPTY) in popen_arguments_list:
-            popen_arguments_list.remove(self.__variables_manager.get_value(variable_name=variables.CO_SIM_EMPTY))
+        # Removing those items with empty value, i.e. equal to '', after having transformed the {CO_SIM_EMPTY}
+        # NOTE: popen_arguments_list[:] -> The [:] is required in order to make reference
+        #                                   to the elements passed as parameter
+        tmp_popen_args_list = popen_arguments_list
+        popen_arguments_list[:] = [empty_item.strip() for empty_item in tmp_popen_args_list if empty_item.strip()]
 
         return enums.XmlManagerReturnCodes.XML_OK
 
@@ -146,7 +148,7 @@ class ActionsXmlManager(object):
                 # STEP 2 - Popen arguments list
                 # Command-line argv[0..n] for Popen call, including mpirun (local VMs) srun (HPC)
                 popen_arguments_list = xml_action_manager.get_popen_arguments_list()
-                # transform CO_SIM_* variables
+                # STEP 2.1 - transform CO_SIM_* variables
                 # NOTE: the CO_SIM_* variables must have the run-time values assigned in this point,
                 # otherwise, the Co-Simulation process will not be performed properly
                 if not self.__transform_popen_args_co_sim_variables_into_values(
@@ -155,7 +157,19 @@ class ActionsXmlManager(object):
                         'Error found transforming into values the CO_SIM_ variables found in {}'.format(
                             current_action_xml_path_filename))
                     return enums.XmlManagerReturnCodes.XML_CO_SIM_VARIABLE_ERROR
-                self.__actions_popen_arguments_dict[key] = popen_arguments_list
+
+                # STEP 2.2 - Joining those command line arguments finished with '=' with its correspoding value
+                #            e.g. '--cpu-bind=', 'none' will become '--cpu-bind=none'
+
+                joining_popen_arguments_list = []
+                for i, val in enumerate(popen_arguments_list):
+                    if val.strip().startswith('-') and val.strip().endswith('='):
+                        # is a command argument
+                        popen_arguments_list[i + 1] = val.strip() + popen_arguments_list[i + 1]
+                        continue
+                    joining_popen_arguments_list.append(val)
+
+                self.__actions_popen_arguments_dict[key] = joining_popen_arguments_list
 
         return enums.XmlManagerReturnCodes.XML_OK
 
@@ -227,7 +241,7 @@ class ActionsXmlManager(object):
                 XML_TAG_ERROR: Error found dissecting the launcher section of the action section
                 XML_OK: The launcher section was dumped properly into the Popen arguments list
             """
-            # launcher binary, e.g. mpirun or slurm
+            # launcher binary, i.e. mpirun or slurm
             try:
                 self.__Popen_arguments_list.append(
                     self.__launcher_dict[xml_tags.CO_SIM_XML_ACTION_LAUNCHER_COMMAND])
