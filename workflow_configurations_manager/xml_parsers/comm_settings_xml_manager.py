@@ -38,6 +38,7 @@ class CommunicationSettingsXmlManager(XmlManager):
             XML_OK: Mimicking <variables> section parsing process was successful.
         """
 
+
         return enums.XmlManagerReturnCodes.XML_OK
 
     def _build_parameters_dict_from_xml_main_dicts(self):

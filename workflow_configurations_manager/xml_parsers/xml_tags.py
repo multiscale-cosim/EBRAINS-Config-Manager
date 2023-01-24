@@ -78,3 +78,9 @@ CO_SIM_XML_CO_SIM_PARAMS_PAIR_DATA_TYPE = 'data_type'
 
 # XML Tags used to parse Co-Simulation Communication Settings XML files
 CO_SIM_XML_CO_SIM_COMM_SETTINGS_ROOT_TAG = 'co_simulation_communication_settings'
+
+# XML Tags uses to parse Co-Simulation Deployment Settings
+CO_SIM_XML_CO_SIM_SERVICES_DEPLOYMENT_ROOT_TAG = 'co_simulation_services_deployment'
+CO_SIM_XML_CO_SIM_SERVICES_DEPLOYMENT_SRUN_OPTIONS = 'srun_options'
+CO_SIM_XML_CO_SIM_SERVICES_DEPLOYMENT_SETTINGS = 'deployment_settings'
+
