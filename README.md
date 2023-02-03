@@ -1,77 +1,80 @@
-# Configurations Manager
+<div align="center" id="top"> 
+  <img src="../../../misc/logo.jpg" alt="Modular Science: Multi-scale Co-simulation" />
 
-It provides with the basic functionalities including the 
-directory management, log management, XML configurations parsing,
-conversion of XML element tree into Python dictionary object.
-The features it provides include, a centralized management of
+  &#xa0;
 
-* XML parsing and manipulation, 
-* setting up directories, and
-* a uniform format for the logs.
+  <!-- <a href="git@github.com:multiscale-cosim/TVB-NEST-usecase1.git">Demo</a> -->
+</div>
 
-## Basic Description
+<h1 align="center">Modular Science: Configurations Manager</h1>
 
-* **global_settings.xml**: XML file which contains the configuration settings.
-* **directories_manager.py**: Creates and manages the directories. It also creates the default directories such as results, logs etc.  
-* **xml_parser.py**: It provides the functionalities for parsing an xml file and to manipulate it (e.g. converting an xml element tree into dictionary etc.). 
-* **config_logger.py**: Creates and configure logger using specified name and configuration settings.
-* **configurations_manager.py**: Mediator to communicate with all modules and a central point to manage the configurations.
-* **utils/directory_util.py**: Utility methods for directory management such as to safely creating a directory where there is a race condition i.e. multiple processes try to create the same directory.
-* **utils/dictionary_util.py**: Utility methods to manipulate the nested dictionaries such as to find a set a value in a nested dictionary.
+<p align="center">
+  <img alt="Github top language" src="https://img.shields.io/github/languages/top/multiscale-cosim/EBRAINS_WorkflowConfigurations?color=56BEB8" />
 
-## Example
+  <img alt="Github language count" src="https://img.shields.io/github/languages/count/multiscale-cosim/EBRAINS_WorkflowConfigurations?color=56BEB8" />
 
-A minimal working example code is provided in example directory.
+  <img alt="Repository size" src="https://img.shields.io/github/repo-size/multiscale-cosim/EBRAINS_WorkflowConfigurations?color=56BEB8" />
 
-The following example illustrates how to:
+  <img alt="License" src="https://img.shields.io/github/license/multiscale-cosim/EBRAINS_WorkflowConfigurations?color=56BEB8" />
 
-1. Parse XML configurations with Configurations Manager
-1. Setup (default) output directories at default locations (specified in XML configurations)
-1. Retrieve path to default directories
-1. Setup Log configurations 
-   1. set path to logs at default location (e.g. ../Cosimulation_outputs/<username>_output_<timestamp>/logs)
-   1. set user specified path to the logs
+  <img alt="Github issues" src="https://img.shields.io/github/issues/multiscale-cosim/EBRAINS_WorkflowConfigurations?color=56BEB8" />
+
+  <img alt="Github forks" src="https://img.shields.io/github/forks/multiscale-cosim/EBRAINS_WorkflowConfigurations?color=56BEB8" />
+
+  <img alt="Github stars" src="https://img.shields.io/github/stars/multiscale-cosim/EBRAINS_WorkflowConfigurations?color=56BEB8" />
+</p>
+
+## Status
+
+<h4 align="center"> 
+	🚧  Modular Science: Multi-scaleCo-simulation - Configurations Manager 🚧
+</h4> 
+
+<hr>
+
+<p align="center">
+  <a href="#dart-about">About</a> &#xa0; | &#xa0; 
+  <a href="#sparkles-features">Features</a> &#xa0; | &#xa0;
+  <a href="#rocket-technologies">Technologies</a> &#xa0; | &#xa0;
+  <a href="#white_check_mark-Dependencies">Dependencies</a> &#xa0; | &#xa0;
+  <a href="#checkered_flag-starting">Getting Started</a> &#xa0; | &#xa0;
+  <a href="#memo-license">License</a> &#xa0; | &#xa0;
+  <a href="https://github.com/multiscale-cosim" target="_blank">Author</a> &#xa0; | &#xa0;
+  <a href="https://github.com/multiscale-cosim" target="_blank">Acknowledgement</a>
+</p>
+
+<br>
+
+## :dart: About ##
+...
+
+## :sparkles: Features ##
+
+...
+
+## :rocket: Technologies ##
+
+The following tools were used in this project:
+...
+
+## :white_check_mark: Dependencies ##
+
+Before starting :checkered_flag:, you need to have [Python](https://www.python.org/) and [CMake](https://cmake.org/) installed.
+
+## :checkered_flag: Getting Started ##
+
+...
+
+## :memo: License ##
+
+This project is under license from Apache License, Version 2.0. For more details, see the [LICENSE](LICENSE) file.
 
 
-```bash
-# set enviornment variable
-$ export PYTHONPATH=/path/to/common-utils
+Made by <a href="https://github.com/multiscale-cosim" target="_blank">Multiscale Co-simulation team</a>.
 
-# access
-$ cd /path/to/configuration_manager
-```
+## :memo: Acknowledgement ##
 
-```python
-# instantiate configuration manager
-configurations_manager = ConfigurationsManager()
 
-# get path to setup output directory from the configuration file
-default_dir = configurations_manager.get_configuration_settings('output_directory', 'global_settings.xml')
+&#xa0;
 
-# make default directories i.e. Output,  Output/Results, Output/Logs, Output/Figures using user id, timestamp to make it unique
-configurations_manager.setup_default_directories(default_dir['output_directory'])
-
-# get path to the default output directory
-configurations_manager.get_default_directory(DefaultDirectories.OUTPUT)
-
-# load log configurations
-logger_settings = configurations_manager.get_configuration_settings('log_configurations', 'global_settings.xml')
-
-# configure logger with default settings
-example_logger = configurations_manager.load_log_configurations(name=__name__, log_configurations=logger_settings)
-
-# configure logger with user specified location
-dir_path=Path('../my_logs')
-example_logger = configurations_manager.load_log_configurations(name=__name__, log_configurations=logger_settings,
-                                                         directory='tests', directory_path=dir_path)
-
-# emit logs
-example_logger.info("logger is configured!")
-example_logger.error("an error message!")
-```
-
-## License
-
-Copyright 2020 Forschungszentrum Jülich GmbH  
-"Licensed to the Apache Software Foundation (ASF) under one or more contributor
-license agreements; and to You under the Apache License, Version 2.0. "
+<a href="#top">Back to top</a>
