@@ -200,6 +200,10 @@ class VariablesManager(object):
         # Since SLURM_NNODES is set, meaning SLURM_NODELIST must be set as well,
         # e.g. SLURM_NODELIST=jsfc056       -> 1 Node
         #      SLURM_NODELIST=jsfc[056-057] -> 2 Nodes
+        # IMPORTANT: On JUWELS, Slurm assigns the nodes in different way, as follows:
+        #   SLURM_NNODES=3
+        #   SLURM_JOB_NODELIST=jwc00n[001-002,004]
+        #   SLURM_NODELIST=jwc00n[001-002,004]
         slurm_node_list_prefix_and_range = re.split('\[|\]', os.environ['SLURM_NODELIST'])
         node_range_length = len(slurm_node_list_prefix_and_range)
         if 0 == node_range_length:
@@ -212,27 +216,41 @@ class VariablesManager(object):
         elif 1 == node_range_length:
             # only one HPC node is being used
             #
-            # This is a wrong assigment: self.__dict['CO_SIM_SLURM_NODE_000'] = slurm_node_list_prefix_and_range[0]
+            # This is a wrong assignment: self.__dict['CO_SIM_SLURM_NODE_000'] = slurm_node_list_prefix_and_range[0]
             #
             self.__dict['CO_SIM_SLURM_NODE_000'] = \
                 {constants.CO_SIM_VARIABLE_DESCRIPTION: 'SLURM compute node hostname',
-                 constants.CO_SIM_VARIABLE_VALUE: slurm_node_list_prefix_and_range[0] }
+                 constants.CO_SIM_VARIABLE_VALUE: slurm_node_list_prefix_and_range[0]}
         else:
             # two or more HPC nodes have been allocated
             hpc_nodes_name_prefix = slurm_node_list_prefix_and_range[0]
-            hpc_nodes_name_range = slurm_node_list_prefix_and_range[1]
-            nodes_name_suffix_list = re.split(r'-', hpc_nodes_name_range)
-            first_node_name_suffix = nodes_name_suffix_list[0]
-            last_node_name_suffix = nodes_name_suffix_list[1]
+            # getting suffix node range(s), e.g. 012-014; and suffix node ID, e.g. 004 per se
+            hpc_nodes_name_suffix_groups_list = re.split(r',', slurm_node_list_prefix_and_range[1])
 
-            n_correlative = 0
-            for curr_n_node_name_suffix in range(int(first_node_name_suffix), int(last_node_name_suffix) + 1):
-                co_sim_slurm_node_variable_name = f'CO_SIM_SLURM_NODE_{n_correlative:0>3d}'
+            n_correlative = 0   # CO_SIM_SLURM_NODE_<n_correlative>
+            for curr_hpc_nodes_suffix_group in hpc_nodes_name_suffix_groups_list:
 
-                self.__dict[co_sim_slurm_node_variable_name] = \
-                    {constants.CO_SIM_VARIABLE_DESCRIPTION: f'SLURM compute node hostname {n_correlative:0>3d}',
-                     constants.CO_SIM_VARIABLE_VALUE: f'{hpc_nodes_name_prefix}{curr_n_node_name_suffix:0>3d}'}
+                hpc_nodes_suffix_range_limits_list = [None, None]
+                hpc_nodes_suffix_range_limits_index = 0
+                hpc_nodes_suffix_range_list = re.split(r'-', curr_hpc_nodes_suffix_group)
 
-                n_correlative += 1
+                for curr_hpc_nodes_suffix_limit in hpc_nodes_suffix_range_list:
+                    hpc_nodes_suffix_range_limits_list[hpc_nodes_suffix_range_limits_index] = \
+                        int(curr_hpc_nodes_suffix_limit)
+                    hpc_nodes_suffix_range_limits_index = 1
+
+                if hpc_nodes_suffix_range_limits_list[1] is None:
+                    # there is no upper limit, meaning there is only one node on the group
+                    hpc_nodes_suffix_range_limits_list[1] = int(hpc_nodes_suffix_range_limits_list[0])
+
+                for curr_n_node_name_suffix in range(hpc_nodes_suffix_range_limits_list[0],
+                                                     hpc_nodes_suffix_range_limits_list[1] + 1):
+                    co_sim_slurm_node_variable_name = f'CO_SIM_SLURM_NODE_{n_correlative:0>3d}'
+
+                    self.__dict[co_sim_slurm_node_variable_name] = \
+                        {constants.CO_SIM_VARIABLE_DESCRIPTION: f'SLURM compute node hostname {n_correlative:0>3d}',
+                         constants.CO_SIM_VARIABLE_VALUE: f'{hpc_nodes_name_prefix}{curr_n_node_name_suffix:0>3d}'}
+
+                    n_correlative += 1
 
         return enums.VariablesReturnCodes.VARIABLE_OK
