@@ -29,11 +29,11 @@ class ServicesDeploymentXmlManager(XmlManager):
              on local systems where multiple cores could be used.
     """
 
-    def __init__(self, log_settings, configurations_manager, variable_manager, xml_filename, name):
+    def __init__(self, log_settings, configurations_manager, variables_manager, xml_filename, name):
         super().__init__(log_settings, configurations_manager, xml_filename, name)
 
         self.__services_deployment_dict = None
-        self.__variable_manager = variable_manager
+        self.__variables_manager = variables_manager
 
     def initialize_xml_elements(self):
         # TO BE DONE: there should be a global XML file where tags are defined
@@ -111,7 +111,7 @@ class ServicesDeploymentXmlManager(XmlManager):
                 in self.__services_deployment_dict[xml_tags.CO_SIM_XML_CO_SIM_SERVICES_DEPLOYMENT_SETTINGS].items():
 
             self.__services_deployment_dict[xml_tags.CO_SIM_XML_CO_SIM_SERVICES_DEPLOYMENT_SETTINGS][key] = \
-                utils.transform_co_simulation_variables_into_values(variables_manager=self.__variable_manager,
+                utils.transform_co_simulation_variables_into_values(variables_manager=self.__variables_manager,
                                                                     functional_variable_value=value)
 
         return enums.XmlManagerReturnCodes.XML_OK
