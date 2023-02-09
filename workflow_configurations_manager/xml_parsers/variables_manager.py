@@ -11,6 +11,8 @@
 #       Team: Multi-scale Simulation and Design
 #
 # ------------------------------------------------------------------------------
+import os
+import re
 
 # Co-Simulator Imports
 from EBRAINS_ConfigManager.workflow_configurations_manager.xml_parsers import enums
@@ -162,9 +164,93 @@ class VariablesManager(object):
                 self.__dict[variables.CO_SIM_LAUNCHER] = \
                     {constants.CO_SIM_VARIABLE_DESCRIPTION: 'launcher created on run time',
                      constants.CO_SIM_VARIABLE_VALUE: 'srun'}
+
+                # In this point of execution, it is clear that the run-time environment is a HPC cluster,
+                #  assumed that the SLURM's resources have been allocated by means
+                # of salloc
+
+                return self.__creates_co_sim_vars_from_slurm_env_vars()
             else:
                 self.__logger.error('{} wrong value set. <LOCAL|CLUSTER>'.format(
                     variables.CO_SIM_EXECUTION_ENVIRONMENT))
                 return enums.VariablesReturnCodes.VARIABLE_NOT_OK
+
+        return enums.VariablesReturnCodes.VARIABLE_OK
+
+    def __creates_co_sim_vars_from_slurm_env_vars(self):
+        """
+            Populates the CO_SIM_* variables from the SLURM_* environment variables
+            IMPORTANT: It is assumed that salloc has been executed and the resources
+                        haven assigned properly (end-user task)
+        :return
+            VARIABLE_OK
+            VARIABLE_NOT_OK
+        """
+
+        # No. of requested HPC nodes
+        try:
+            n_nodes = int(os.environ['SLURM_NNODES'])
+            self.__dict[variables.CO_SIM_SLURM_NNODES] = \
+                {constants.CO_SIM_VARIABLE_DESCRIPTION: 'SLURM_NNODES',
+                 constants.CO_SIM_VARIABLE_VALUE: n_nodes}
+        except KeyError:
+            self.__logger.error('SLURM_NNODES environment variable has not been set yet, use "salloc"')
+            return enums.VariablesReturnCodes.VARIABLE_NOT_FOUND
+
+        # Since SLURM_NNODES is set, meaning SLURM_NODELIST must be set as well,
+        # e.g. SLURM_NODELIST=jsfc056       -> 1 Node
+        #      SLURM_NODELIST=jsfc[056-057] -> 2 Nodes
+        # IMPORTANT: On JUWELS, Slurm assigns the nodes in different way, as follows:
+        #   SLURM_NNODES=3
+        #   SLURM_JOB_NODELIST=jwc00n[001-002,004]
+        #   SLURM_NODELIST=jwc00n[001-002,004]
+        slurm_node_list_prefix_and_range = re.split('\[|\]', os.environ['SLURM_NODELIST'])
+        node_range_length = len(slurm_node_list_prefix_and_range)
+        if 0 == node_range_length:
+            self.__logger.error('SLURM_NODELIST environment variable has not been set yet, use "salloc"')
+            return enums.VariablesReturnCodes.VALUE_NOT_SET
+        elif 1 == node_range_length and node_range_length != n_nodes:
+            # There is no match between SLURM_NNODES and SLURM_NODELIST
+            self.__logger.error('SLURM_NODELIST does not match with SLURM_NODELIST, it might be "salloc" failed')
+            return enums.VariablesReturnCodes.VARIABLE_NOT_OK
+        elif 1 == node_range_length:
+            # only one HPC node is being used
+            #
+            # This is a wrong assignment: self.__dict['CO_SIM_SLURM_NODE_000'] = slurm_node_list_prefix_and_range[0]
+            #
+            self.__dict['CO_SIM_SLURM_NODE_000'] = \
+                {constants.CO_SIM_VARIABLE_DESCRIPTION: 'SLURM compute node hostname',
+                 constants.CO_SIM_VARIABLE_VALUE: slurm_node_list_prefix_and_range[0]}
+        else:
+            # two or more HPC nodes have been allocated
+            hpc_nodes_name_prefix = slurm_node_list_prefix_and_range[0]
+            # getting suffix node range(s), e.g. 012-014; and suffix node ID, e.g. 004 per se
+            hpc_nodes_name_suffix_groups_list = re.split(r',', slurm_node_list_prefix_and_range[1])
+
+            n_correlative = 0   # CO_SIM_SLURM_NODE_<n_correlative>
+            for curr_hpc_nodes_suffix_group in hpc_nodes_name_suffix_groups_list:
+
+                hpc_nodes_suffix_range_limits_list = [None, None]
+                hpc_nodes_suffix_range_limits_index = 0
+                hpc_nodes_suffix_range_list = re.split(r'-', curr_hpc_nodes_suffix_group)
+
+                for curr_hpc_nodes_suffix_limit in hpc_nodes_suffix_range_list:
+                    hpc_nodes_suffix_range_limits_list[hpc_nodes_suffix_range_limits_index] = \
+                        int(curr_hpc_nodes_suffix_limit)
+                    hpc_nodes_suffix_range_limits_index = 1
+
+                if hpc_nodes_suffix_range_limits_list[1] is None:
+                    # there is no upper limit, meaning there is only one node on the group
+                    hpc_nodes_suffix_range_limits_list[1] = int(hpc_nodes_suffix_range_limits_list[0])
+
+                for curr_n_node_name_suffix in range(hpc_nodes_suffix_range_limits_list[0],
+                                                     hpc_nodes_suffix_range_limits_list[1] + 1):
+                    co_sim_slurm_node_variable_name = f'CO_SIM_SLURM_NODE_{n_correlative:0>3d}'
+
+                    self.__dict[co_sim_slurm_node_variable_name] = \
+                        {constants.CO_SIM_VARIABLE_DESCRIPTION: f'SLURM compute node hostname {n_correlative:0>3d}',
+                         constants.CO_SIM_VARIABLE_VALUE: f'{hpc_nodes_name_prefix}{curr_n_node_name_suffix:0>3d}'}
+
+                    n_correlative += 1
 
         return enums.VariablesReturnCodes.VARIABLE_OK

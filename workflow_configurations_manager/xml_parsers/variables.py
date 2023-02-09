@@ -27,6 +27,13 @@ CO_SIM_LAUNCHER = 'CO_SIM_LAUNCHER'  # Contains srun or mpirun according to the 
 CO_SIM_MODULES_ROOT_PATH = 'CO_SIM_MODULES_ROOT_PATH'  # mutilscale-cosim/EBRAINS-<app-domain> repos location
 
 
+# SLURM's SLURM_NNODES equivalent
+# in order to have the base amount of allocated resources
+# IMPORTANT: CO_SIM_SLURM_NODE_?? are created dynamically
+#            based on the allocated resources
+CO_SIM_SLURM_NNODES = 'CO_SIM_SLURM_NNODES'
+
+
 # The RESULTS path must be assigned on run-time gathered by means of the configuration manager
 CO_SIM_RESULTS_PATH = 'CO_SIM_RESULTS_PATH'
 
@@ -41,6 +48,12 @@ CO_SIM_COMMUNICATION_SETTINGS_PATH = 'CO_SIM_COMMUNICATION_SETTINGS_PATH'
 
 CO_SIM_COMMUNICATION_SETTINGS_XML = 'CO_SIM_COMMUNICATION_SETTINGS_XML'
 
+
+CO_SIM_SERVICES_DEPLOYMENT_PATH = 'CO_SIM_SERVICES_DEPLOYMENT_PATH'
+
+CO_SIM_SERVICES_DEPLOYMENT_XML = 'CO_SIM_SERVICES_DEPLOYMENT_XML'
+
+
 #
 # Tuple used by the Variables Manager in order to create a dictionary for
 # further processing
@@ -51,6 +64,7 @@ CO_SIM_VARIABLES_TUPLE = (
     CO_SIM_EXECUTION_ENVIRONMENT,
     CO_SIM_LAUNCHER,
     CO_SIM_MODULES_ROOT_PATH,
+    CO_SIM_SLURM_NNODES,
     CO_SIM_PARAMETERS_PATH,
     CO_SIM_RESULTS_PATH,
     CO_SIM_ROOT_PATH,
@@ -58,4 +72,6 @@ CO_SIM_VARIABLES_TUPLE = (
     CO_SIM_USE_CASE_ROOT_PATH,
     CO_SIM_COMMUNICATION_SETTINGS_PATH,
     CO_SIM_COMMUNICATION_SETTINGS_XML,
+    CO_SIM_SERVICES_DEPLOYMENT_PATH,
+    CO_SIM_SERVICES_DEPLOYMENT_XML,
 )
