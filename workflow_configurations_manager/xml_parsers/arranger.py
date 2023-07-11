@@ -18,7 +18,7 @@ from EBRAINS_ConfigManager.workflow_configurations_manager.xml_parsers import en
 from EBRAINS_ConfigManager.workflow_configurations_manager.xml_parsers import xml_tags
 from EBRAINS_ConfigManager.workflow_configurations_manager.xml_parsers import utils
 from EBRAINS_ConfigManager.workflow_configurations_manager.xml_parsers import constants
-from common.utils import directory_utils
+from EBRAINS_Launcher.common.utils import directory_utils
 
 
 class Arranger(object):

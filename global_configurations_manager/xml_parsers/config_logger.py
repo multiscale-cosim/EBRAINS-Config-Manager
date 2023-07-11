@@ -8,7 +8,7 @@ import os
 import logging
 import logging.config
 
-from common.utils import dictionary_utils
+from EBRAINS_Launcher.common.utils import dictionary_utils
 
 
 class ConfigLogger:
