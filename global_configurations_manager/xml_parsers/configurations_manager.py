@@ -20,7 +20,6 @@ class ConfigurationsManager:
 
     def setup_default_directories(self, directory) -> str:
         """Wrapper for setting up default directories"""
-        # return self.__directories_manager.setup_default_directories(directory)
         return self.__directories_manager.setup_default_directories(directory)
 
     def make_directory(self, target_directory, parent_directory=None):
